@@ -1,0 +1,5 @@
+#Ftp (21)
+ ftp "usr"@"ip"
+
+#Telnet (23)
+ telnet "ip" 23
