@@ -3,3 +3,7 @@
 
 #Telnet (23)
  telnet "ip" 23
+
+#SMB (445)
+ smb -L //"ip" -U ""
+ smb -L //"ip"/"open patch" -U "" (patch without "$")
