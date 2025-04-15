@@ -10,4 +10,5 @@
 
 #Redis
  redis-cli -h 10.129.106.181 -p 6379
+ keys *
  
