@@ -11,4 +11,6 @@
 #Redis
  redis-cli -h 10.129.106.181 -p 6379
  keys *
- 
+
+#SQL (3306)
+ mysql -h 10.129.207.103  -P 3306 -u root -p
