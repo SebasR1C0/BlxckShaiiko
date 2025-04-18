@@ -5,3 +5,5 @@
 -sS
 
 -O --osscan-guess
+
+-sV --version-intensity
