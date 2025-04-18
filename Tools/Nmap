@@ -6,4 +6,4 @@
 
 -O --osscan-guess
 
--sV --version-intensity
+-sV --version-intensity 8
