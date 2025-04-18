@@ -3,3 +3,5 @@
 -F
 
 -sS
+
+-O --osscan-guess
