@@ -5,8 +5,8 @@
  telnet "ip" 23
 
 #SMB (445)
- smb -L //"ip" -U ""
- smb -L //"ip"/"open patch" -U "" (patch without "$")
+ smbclient -L //"ip" -U ""
+ smbclient //"ip"/"open patch" -U "" (patch without "$")
 
 #Redis
  redis-cli -h 10.129.106.181 -p 6379
