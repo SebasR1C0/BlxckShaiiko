@@ -7,3 +7,13 @@
 -O --osscan-guess
 
 -sV --version-intensity 8
+
+-sS -A -p- -T5
+
+-Sn
+
+ls -al /usr/share/nmap/scripts/ | grep -e "sql"
+
+-sS -sV sscript=ftp-anon,memcached-info -p55413 -T4
+
+-sS -sV sscript=ftp-* -p55413 -T4
