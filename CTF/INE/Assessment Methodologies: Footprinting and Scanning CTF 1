@@ -1,0 +1,33 @@
+Tasks: 
+
+    Flag 1: The server proudly announces its identity in every response. Look closely; you might find something unusual.
+    Flag 2: The gatekeeper's instructions often reveal what should remain unseen. Don't forget to read between the lines.
+    Flag 3: Anonymous access sometimes leads to forgotten treasures. Connect and explore the directory; you might stumble upon something valuable.
+    Flag 4: A well-named database can be quite revealing. Peek at the configurations to discover the hidden treasure.
+
+Performance:
+
+We star with
+  target.ine.local/robots.txt
+  target.ine.local/sitemaps.xml->I didn´t find anything
+
+Starting with nmap 
+nmap -sS -A -T4 target.ine.local
+This we find the first flag
+
+target.ine.local/robots.txt
+curl target.ine.local/secret-info
+curl target.ine.local/secret-info/flag.txt
+This we find the flag 2
+
+we see FTP port open and also we have the information about the user
+ftp anonymous@192.205.63.3
+ls
+get flag.txt
+This we find the flag 3
+
+we get credentials.txt in the ftp port so we enter in msql
+ysql -h 192.205.63.3  -P 3306 -u db_admin -p
+password@123
+This we find the flag 4
+SHOW DATABASES;
