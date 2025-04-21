@@ -1,27 +1,30 @@
--sC
+-sC: Enables the default script scan. Uses a set of standard Nmap scripts to gather additional information about the target.
 
--F
+-F: Scans fewer ports (fast mode), focusing only on those most commonly used.
 
--sS
+-sS: Performs a stealth SYN scan, which is less likely to be detected by firewalls.
 
--O --osscan-guess
+-O --osscan-guess: Attempts to determine the operating system of the target and guesses if uncertain.
 
--sV --version-intensity 8
+-sV --version-intensity 8: Detects service versions with a high intensity level (8), which can provide more detailed results.
 
--A
+-A: Enables aggressive mode, combining OS detection, version detection, script scanning, and traceroute.
 
--Sn
+-Sn: Disables port scanning and only performs host discovery (ping scan).
 
 ls -al /usr/share/nmap/scripts/ | grep -e "sql"
+Lists all Nmap scripts related to SQL vulnerabilities or services in the scripts directory.
 
--sS -sV sscript=ftp-anon,memcached-info -p55413 -T4
+-sS -sV --script=ftp-anon,memcached-info -p55413 
+Performs a stealth SYN scan and version detection on port 55413, using specific scripts (ftp-anon, memcached-info) 
 
--sS -sV sscript=ftp-* -p55413 -T4
+-sS -sV --script=ftp-* -p55413 -T4: Similar to the above, but uses all scripts matching the ftp-* pattern.
 
--f --mtu --data-length
+-f --mtu --data-length: Enables fragmentation to evade firewalls, adjusts MTU size, and specifies the length of data payloads.
 
--D
+-D: Enables decoy scanning, disguising the user's IP with multiple decoys.
 
--sA
+-sA: Performs an ACK scan, useful for determining firewall rules.
 
--g 53
+-g 53: Sets the source port to 53, which can sometimes bypass firewalls by mimicking DNS traffic.
+
