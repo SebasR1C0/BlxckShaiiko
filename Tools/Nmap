@@ -28,3 +28,12 @@ Performs a stealth SYN scan and version detection on port 55413, using specific 
 
 -g 53: Sets the source port to 53, which can sometimes bypass firewalls by mimicking DNS traffic.
 
+--host-timeout 5s;5m;2h
+
+--scan-delay 5s
+
+-oN nombre.txt
+
+-oX nombre.xml
+
+-oG nombre.txt
