@@ -16,7 +16,7 @@ For example, hydra -l root -P passwords.txt 10.10.91.23 -t 4 ssh will run with t
     It will try the passwords in the passwords.txt file
     There will be four threads running in parallel as indicated by -t 4
 
-hydra -l admin -P rockyou.txt 10.10.4.206 http-post-form 'dwva/login.php:username=^USER^&password=^PASS^&Login=Login:Login Failed
+hydra -l admin -P rockyou.txt 10.10.4.206 http-post-form 'dwva/login.php:username=^USER^&password=^PASS^&Login Failed
 Post Web Form
 
 We can use Hydra to brute force web forms too. You must know which type of request it is making; GET or POST methods are commonly used. You can use your browser’s network tab (in developer tools) to see the request types or view the source code.
