@@ -16,7 +16,7 @@ sessions
 
 wokspace -a Nmap_task
 
-db_nmap -Pn - sV -O 10.4.22.173
+db_nmap -Pn - sV -O 10.4.22.173 (LHOST)
 
 vunls
 
