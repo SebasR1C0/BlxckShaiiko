@@ -1,0 +1,19 @@
+service postgresql start
+
+msfconsole
+
+db_status
+
+workspace -a Wink2k21 (create a workspace an usiing) 
+
+db_import /root/windows_server_2012 (output file .xml)
+
+hosts
+
+services
+
+wokspace -a Nmap_task
+
+db_nmap -Pn - sV -O 10.4.22.173
+
+vunls
