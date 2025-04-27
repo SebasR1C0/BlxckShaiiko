@@ -8,6 +8,7 @@ Step 1:
   Metasploit tip: Set the current module's RHOSTS with database values using 
   hosts -R or services -R
 
+msf6 > workspace -a FTP
 msf6 > use auxiliary/scanner/portscan/tcp
 msf6 auxiliary(scanner/portscan/tcp) > set RHOSTS 192.165.123.3
   RHOSTS => 192.165.123.3
