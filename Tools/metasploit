@@ -24,6 +24,8 @@ search portscan
 
 search udep_sweep
 
+search type:auxiliary name:ftp
+
 use auxiliary/scanner/portscan/tcp
 set RHOSTS 192.180.108.3
 set verbose false
