@@ -1,0 +1,62 @@
+TOOLS: 
+    -auxiliary/scanner/mysql/mysql_version
+    -auxiliary/scanner/mysql/mysql_login
+    auxiliary/admin/mysql/mysql_enum
+    auxiliary/admin/mysql/mysql_sql
+    auxiliary/scanner/mysql/mysql_file_enum
+    auxiliary/scanner/mysql/mysql_hashdump
+    auxiliary/scanner/mysql/mysql_schemadump
+    auxiliary/scanner/mysql/mysql_writable_dirs
+
+
+┌──(root㉿INE)-[~]
+└─# nmap -sS -Pn -A -T5 demo.ine.local
+Starting Nmap 7.94SVN ( https://nmap.org ) at 2025-04-28 19:16 IST
+Nmap scan report for demo.ine.local (192.232.12.3)
+Host is up (0.000044s latency).
+Not shown: 999 closed tcp ports (reset)
+PORT     STATE SERVICE VERSION
+3306/tcp open  mysql   MySQL 5.5.61-0ubuntu0.14.04.1
+| mysql-info: 
+|   Protocol: 10
+|   Version: 5.5.61-0ubuntu0.14.04.1
+|   Thread ID: 44
+|   Capabilities flags: 63487
+|   Some Capabilities: LongPassword, Speaks41ProtocolOld, SupportsLoadDataLocal, ConnectWithDatabase, FoundRows, Support41Auth, SupportsTransactions, SupportsCompression, LongColumnFlag, IgnoreSigpipes, InteractiveClient, Speaks41ProtocolNew, DontAllowDatabaseTableColumn, IgnoreSpaceBeforeParenthesis, ODBCClient, SupportsAuthPlugins, SupportsMultipleStatments, SupportsMultipleResults
+|   Status: Autocommit
+|   Salt: D-O+&{[6;ccEo~NJgFja
+|_  Auth Plugin Name: mysql_native_password
+MAC Address: 02:42:C0:E8:0C:03 (Unknown)
+Device type: general purpose
+Running: Linux 4.X|5.X
+OS CPE: cpe:/o:linux:linux_kernel:4 cpe:/o:linux:linux_kernel:5
+OS details: Linux 4.15 - 5.8
+Network Distance: 1 hop
+
+TRACEROUTE
+HOP RTT     ADDRESS
+1   0.04 ms demo.ine.local (192.232.12.3)
+
+OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 1.64 seconds
+
+
+STEP 1:
+msf6 > use auxiliary/scanner/mysql/mysql_version 
+[*] New in Metasploit 6.4 - This module can target a SESSION or an RHOST
+msf6 auxiliary(scanner/mysql/mysql_version) > exploit
+
+[+] 192.232.12.3:3306 - 192.232.12.3:3306 is running MySQL 5.5.61-0ubuntu0.14.04.1 (protocol 10)
+[*] demo.ine.local:3306 - Scanned 1 of 1 hosts (100% complete)
+[*] Auxiliary module execution completed
+
+STEP 2:
+
+STEP 3:
+
+STEP 4:
+
+STEP 5:
+
+STEP 6:
+
