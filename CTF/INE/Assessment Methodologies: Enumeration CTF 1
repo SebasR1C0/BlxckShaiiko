@@ -1,0 +1,55 @@
+Target:  target.ine.local
+Tasks:
+  
+    Flag 1: There is a samba share that allows anonymous access. Wonder what's in there!
+    Flag 2: One of the samba users have a bad password. Their private share with the same name as their username is at risk!
+    Flag 3: Follow the hint given in the previous flag to uncover this one.
+    Flag 4: This is a warning meant to deter unauthorized users from logging in.
+
+Step 1: 
+┌──(root㉿INE)-[~]
+└─# nmap -sS -Pn -A -T5 target.ine.local
+  Starting Nmap 7.94SVN ( https://nmap.org ) at 2025-04-30 08:02 IST
+  Nmap scan report for target.ine.local (192.187.31.3)
+  Host is up (0.000047s latency).
+  Not shown: 997 closed tcp ports (reset)
+  PORT    STATE SERVICE     VERSION
+  22/tcp  open  ssh         OpenSSH 8.2p1 Ubuntu 4ubuntu0.11 (Ubuntu Linux; protocol 2.0)
+  | ssh-hostkey: 
+  |   3072 bb:ca:49:7e:f5:5c:6e:bf:8a:55:a1:69:d9:c9:18:01 (RSA)
+  |   256 da:06:c1:ab:e7:6f:14:b9:50:d5:43:a7:47:ab:80:ce (ECDSA)
+  |_  256 a1:5c:ab:22:6b:c2:f1:5c:5a:7a:5a:d8:e7:81:e2:33 (ED25519)
+  139/tcp open  netbios-ssn Samba smbd 4.6.2
+  445/tcp open  netbios-ssn Samba smbd 4.6.2
+  MAC Address: 02:42:C0:BB:1F:03 (Unknown)
+  Device type: general purpose
+  Running: Linux 4.X|5.X
+  OS CPE: cpe:/o:linux:linux_kernel:4 cpe:/o:linux:linux_kernel:5
+  OS details: Linux 4.15 - 5.8
+  Network Distance: 1 hop
+  Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+  
+  Host script results:
+  | smb2-time: 
+  |   date: 2025-04-30T02:32:33
+  |_  start_date: N/A
+  | smb2-security-mode: 
+  |   3:1:1: 
+  |_    Message signing enabled but not required
+  |_nbstat: NetBIOS name: TARGET, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+  
+  TRACEROUTE
+  HOP RTT     ADDRESS
+  1   0.05 ms target.ine.local (192.187.31.3)
+  
+  OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+  Nmap done: 1 IP address (1 host up) scanned in 12.84 seconds
+
+--Users
+msf6 auxiliary(scanner/smb/smb_enumusers) > exploit
+
+  [*] 192.187.31.3:445 - Using automatically identified domain: TARGET
+  [+] 192.187.31.3:445 - TARGET [ josh, nancy, bob ] ( LockoutTries=0 PasswordMin=5 )
+  [+] 192.187.31.3:445 - Builtin [  ] ( LockoutTries=0 PasswordMin=5 )
+  [*] target.ine.local:445 - Scanned 1 of 1 hosts (100% complete)
+  [*] Auxiliary module execution completed
