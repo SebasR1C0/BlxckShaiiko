@@ -9,3 +9,6 @@ use auxiliary/scanner/smb/ms17_010
 use exploit/windows/smb/ms17_010_eternalblue
 
 db_auto-pwn
+
+analyze (using info db_nmap)
+vulns
