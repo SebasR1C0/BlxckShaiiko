@@ -1,0 +1,22 @@
+┌──(root㉿sebas)-[/home/sebastianrojas/Descargas]
+└─# systemctl start nessusd.service
+
+┌──(root㉿sebas)-[/home/sebastianrojas/Descargas]
+└─# systemctl status nessusd.service
+● nessusd.service - The Nessus Vulnerability Scanner
+     Loaded: loaded (/usr/lib/systemd/system/nessusd.service; disabled; preset: disabled)
+     Active: active (running) since Thu 2025-05-01 11:16:02 -05; 4s ago
+ Invocation: 2c9c23523dea4899b8a4ea513e57d9c7
+   Main PID: 4320 (nessus-service)
+      Tasks: 13 (limit: 18163)
+     Memory: 192.7M (peak: 193.2M)
+        CPU: 4.231s
+     CGroup: /system.slice/nessusd.service
+             ├─4320 /opt/nessus/sbin/nessus-service -q
+             └─4321 nessusd -q
+
+may 01 11:16:02 sebas systemd[1]: Started nessusd.service - The Nessus Vulnerability Scanner.
+may 01 11:16:03 sebas nessus-service[4321]: Cached 0 plugin libs in 0msec
+may 01 11:16:03 sebas nessus-service[4321]: Cached 0 plugin libs in 0msec
+
+https://192.168.1.52:8834/#/
