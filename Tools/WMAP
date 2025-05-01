@@ -1,0 +1,7 @@
+msf6> wmap run
+
+msf6> wmap_sites -a "IP"
+
+msf6> wmap_targets -t http://"IP"
+
+msf6> wmap_targets -l
