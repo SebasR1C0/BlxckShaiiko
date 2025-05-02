@@ -5,3 +5,13 @@ msf6> wmap_sites -a "IP"
 msf6> wmap_targets -t http://"IP"
 
 msf6> wmap_targets -l
+
+msf6> wmap_run -t
+
+msf6> wmap_run -e
+
+msf6> wmap_vulns -e
+
+use http/options
+use http/http_put
+set PATH
