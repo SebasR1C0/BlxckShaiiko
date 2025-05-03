@@ -1,4 +1,4 @@
-gobuster dirb -u "ip" -w /usr/share/wordlist/dirb/common.txt
+gobuster dir -u "ip" -w /usr/share/wordlist/dirb/common.txt
 
 gobuster dns -d "ip" /usr/share/wordlists/seclists/SecLists-master/Discovery/DNS/subdomains-top1million-5000.txt
 
