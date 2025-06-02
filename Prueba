@@ -2456,6 +2456,3 @@ Code Ecosystem
 I am a solutions architect at a tech company and I need an auto-scaling mechanism for a Python-based web application running in Docker containers, deployed across a hybrid cloud infrastructure (Microsoft Azure, AWS, and GCP). The system should scale based on real-time CPU load. The auto-scaling mechanism should use a custom load monitoring tool that will run within the containers and report the CPU load directly to a central monitoring system. When the CPU load exceeds a certain threshold, the system should automatically scale across all three cloud providers. Explain how this monitoring tool should be designed and how the communication between containers running in different cloud environments would take place even when affected by network inconsistencies and varying latencies while maintaining high availability and load balancing and considering data consistency, fault tolerance, and potential for cross-cloud issues. Explain each step.
 
 
-
-
-
